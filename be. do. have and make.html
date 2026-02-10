@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Grammar Fun</title>
+    <style>
+        :root { 
+            --primary: #f472b6; 
+            --success: #34d399; 
+            --error: #fb7185; 
+            --bg: #fff1f2; 
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; color: #4b5563; }
+        .card { background: white; padding: 2rem; border-radius: 1.5rem; box-shadow: 0 10px 20px rgba(244, 114, 182, 0.2); max-width: 700px; width: 100%; border: 2px solid #fce7f3; }
+        h1 { text-align: center; color: #be185d; margin-bottom: 1.5rem; font-size: 1.5rem; }
+        .stats { text-align: center; margin-bottom: 20px; font-weight: bold; padding: 12px; background: #fdf2f8; border-radius: 12px; color: #be185d; font-size: 1.2rem; }
+        
+        .sentence-row { margin-bottom: 15px; padding: 15px; border: 1px solid #fce7f3; border-radius: 12px; line-height: 2; background: #fffbff; }
+        .btn-opt { padding: 8px 16px; margin: 0 5px; border: 2px solid #fbcfe8; background: white; cursor: pointer; border-radius: 10px; font-weight: 600; color: #be185d; }
+        .btn-opt.correct { background: var(--success); color: white; border-color: var(--success); }
+        .btn-opt.wrong { background: var(--error); color: white; border-color: var(--error); }
+        
+        .words-bank { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; padding: 15px; background: #fdf2f8; border-radius: 15px; justify-content: center; border: 2px dashed var(--primary); min-height: 50px; }
+        .draggable { padding: 10px 18px; background: white; border: 2px solid var(--primary); border-radius: 10px; cursor: pointer; font-weight: bold; color: var(--primary); box-shadow: 0 4px 0 #fbcfe8; transition: 0.2s; }
+        .draggable:active { transform: translateY(2px); box-shadow: 0 2px 0 #fbcfe8; }
+        
+        .drop-zone { display: inline-block; min-width: 80px; height: 32px; border-bottom: 3px dashed #f9a8d4; vertical-align: middle; margin: 0 5px; text-align: center; font-weight: bold; color: #be185d; transition: 0.3s; cursor: pointer; }
+        .drop-zone.wrong-anim { background: #ffe4e6; border-radius: 4px; }
+        .drop-zone.filled { border: none; color: #059669; border-bottom: 3px solid #34d399; cursor: default; }
+
+        .next-btn { display: none; width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 1.1rem; margin-top: 20px; box-shadow: 0 4px 0 #db2777; }
+        
+        .leaderboard { margin-top: 30px; background: #fffbff; padding: 15px; border-radius: 12px; border: 1px solid #fce7f3; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #fce7f3; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1 id="title">Round 1: Tap the Correct Word</h1>
+    <div class="stats">Score: <span id="score">0</span></div>
+
+    <div id="round1-container"></div>
+
+    <div id="round2-container" style="display:none;">
+        <div class="words-bank" id="words-bank"></div>
+        <div id="r2-sentences"></div>
+    </div>
+
+    <button id="action-btn" class="next-btn" onclick="startRound2()">Great! Go to Round 2 ✨</button>
+    <button id="save-btn" class="next-btn" onclick="saveGame()">Save My Score 🏆</button>
+
+    <div class="leaderboard" id="lb-section" style="display:none;">
+        <h3>🌸 Top Friends</h3>
+        <table id="lb-table">
+            <thead><tr><th>Name</th><th>Score</th></tr></thead>
+            <tbody id="lb-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const q1 = [
+        { start: "1 He ", end: " me angry.", opts: ["does", "makes"], ans: "makes" },
+        { start: "2 You're always ", end: " problems with him.", opts: ["making", "having"], ans: "having" },
+        { start: "3 We ", end: " an argument this morning.", opts: ["had", "made"], ans: "had" },
+        { start: "4 ", end: " annoyed with him!", opts: ["I'm", "I've"], ans: "I'm" },
+        { start: "5 ", end: " on your own?", opts: ["Are you", "Have you"], ans: "Are you" },
+        { start: "6 Why don't we ", end: " something like going to the cinema?", opts: ["make", "do"], ans: "do" },
+        { start: "7 You need to ", end: " fun.", opts: ["make", "have"], ans: "have" },
+        { start: "8 Can you ", end: " me a favour?", opts: ["make", "do"], ans: "do" },
+        { start: "9 What ", end: " wrong?", opts: ["is", "has"], ans: "is" },
+        { start: "10 It's hard to ", end: " friends.", opts: ["do", "make"], ans: "make" },
+        { start: "11 It ", end: " my fault.", opts: ["doesn't", "isn't"], ans: "isn't" },
+        { start: "12 You ", end: " lots in common.", opts: ["have", "are"], ans: "have" }
+    ];
+
+    const q2 = [
+        { text: "1 Oh no! Something ___ wrong with the TV.", ans: "is", attempts: 0 },
+        { text: "2 Can you ___ me a favour, please?", ans: "do", attempts: 0 },
+        { text: "3 Some people find it easy to ___ new friends.", ans: "make", attempts: 0 },
+        { text: "4 I'm sorry the glass broke, but it ___ my fault!", ans: "isn't", attempts: 0 },
+        { text: "5 You should talk to someone if you ___ problems.", ans: "have", attempts: 0 },
+        { text: "6 Let's ___ something together on Saturday.", ans: "do", attempts: 0 },
+        { text: "7 Our coach ___ really annoyed with the referee.", ans: "was", attempts: 0 },
+        { text: "8 Were they ___ an argument?", ans: "having", attempts: 0 },
+        { text: "9 We ___ a lot of fun at the party.", ans: "had", attempts: 0 },
+        { text: "10 We ___ much in common.", ans: "don't have", attempts: 0 },
+        { text: "11 She ___ me really angry.", ans: "makes", attempts: 0 },
+        { text: "12 She ___ on her own again.", ans: "is", attempts: 0 }
+    ];
+
+    const bankWords = ["is", "do", "make", "isn't", "have", "do", "was", "having", "had", "don't have", "makes", "is"];
+
+    let score = 0, completed = 0, selectedWord = null, selectedElem = null;
+
+    // ROUND 1
+    const r1Cont = document.getElementById('round1-container');
+    q1.forEach(q => {
+        const row = document.createElement('div');
+        row.className = 'sentence-row';
+        row.innerHTML = `<span>${q.start}</span> <span class="btns"></span> <span>${q.end}</span>`;
+        const bCont = row.querySelector('.btns');
+        q.opts.forEach(o => {
+            const b = document.createElement('button');
+            b.className = 'btn-opt'; b.innerText = o;
+            b.onclick = () => {
+                if (row.dataset.done) return;
+                row.dataset.done = "true";
+                const all = bCont.querySelectorAll('button');
+                all.forEach(x => x.disabled = true);
+                if(o === q.ans) { b.classList.add('correct'); score += 10; }
+                else { b.classList.add('wrong'); all.forEach(x => {if(x.innerText === q.ans) x.classList.add('correct')}); }
+                document.getElementById('score').innerText = score;
+                completed++;
+                if(completed === q1.length) document.getElementById('action-btn').style.display = 'block';
+            };
+            bCont.appendChild(b);
+        });
+        r1Cont.appendChild(row);
+    });
+
+    // ROUND 2
+    function startRound2() {
+        completed = 0;
+        document.getElementById('title').innerText = "Round 2: Try until you win!";
+        document.getElementById('round1-container').style.display = 'none';
+        document.getElementById('action-btn').style.display = 'none';
+        document.getElementById('round2-container').style.display = 'block';
+        
+        const bank = document.getElementById('words-bank');
+        bankWords.sort(() => Math.random() - 0.5).forEach(w => {
+            const div = document.createElement('div');
+            div.className = 'draggable'; div.innerText = w;
+            div.onclick = () => {
+                document.querySelectorAll('.draggable').forEach(d => d.style.background = 'white');
+                div.style.background = '#fbcfe8';
+                selectedWord = w; selectedElem = div;
+            };
+            bank.appendChild(div);
+        });
+
+        const r2List = document.getElementById('r2-sentences');
+        q2.forEach((q, idx) => {
+            const row = document.createElement('div');
+            row.className = 'sentence-row';
+            const pts = q.text.split('___');
+            row.innerHTML = `${pts[0]} <span class="drop-zone" id="dz-${idx}" data-ans="${q.ans}">?</span> ${pts[1]}`;
+            
+            row.querySelector('.drop-zone').onclick = function() {
+                if(!selectedWord || this.classList.contains('filled')) return;
+                
+                if(selectedWord === this.dataset.ans) {
+                    this.innerText = selectedWord;
+                    this.classList.add('filled');
+                    // Расчет баллов: 20 за 1 раз, 10 за 2, 5 за 3 и т.д.
+                    let points = Math.max(2, Math.floor(20 / Math.pow(2, q.attempts)));
+                    score += points;
+                    document.getElementById('score').innerText = score;
+                    selectedElem.style.display = 'none';
+                    selectedWord = null;
+                    completed++;
+                    if(completed === q2.length) document.getElementById('save-btn').style.display = 'block';
+                } else {
+                    // Ошибка
+                    q.attempts++;
+                    this.innerText = selectedWord;
+                    this.classList.add('wrong-anim');
+                    const currentEl = selectedElem;
+                    currentEl.style.opacity = "0.3";
+                    
+                    setTimeout(() => {
+                        this.innerText = "?";
+                        this.classList.remove('wrong-anim');
+                        currentEl.style.opacity = "1";
+                        currentEl.style.background = "white";
+                    }, 600);
+                    selectedWord = null;
+                }
+            };
+            r2List.appendChild(row);
+        });
+    }
+
+    function saveGame() {
+        const name = prompt("Great job! Enter your name:") || "Star";
+        const results = JSON.parse(localStorage.getItem('pink_results') || '[]');
+        results.push({ name, score });
+        results.sort((a,b) => b.score - a.score);
+        localStorage.setItem('pink_results', JSON.stringify(results.slice(0,5)));
+        document.getElementById('lb-section').style.display = 'block';
+        document.getElementById('lb-body').innerHTML = results.map(r => 
+            `<tr><td>${r.name}</td><td>${r.score} pts</td></tr>`).join('');
+        document.getElementById('save-btn').disabled = true;
+    }
+</script>
+</body>
+</html>
