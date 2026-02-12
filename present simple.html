@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Medical English: Writing Focus</title>
+    <title>Medical English: Smart Grammar</title>
     <style>
         :root { 
             --primary: #0ea5e9; 
@@ -13,28 +13,156 @@
             --dark: #0c4a6e;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; color: #334155; }
-        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1); max-width: 800px; width: 100%; border-top: 8px solid var(--primary); }
+        .card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1); max-width: 800px; width: 100%; border-top: 8px solid var(--primary); }
         
-        h1, h2 { color: var(--dark); text-align: center; font-size: 1.4rem; }
+        h1, h2 { color: var(--dark); text-align: center; font-size: 1.3rem; }
         .score-box { position: sticky; top: 10px; background: var(--primary); color: white; padding: 12px; border-radius: 50px; text-align: center; font-weight: bold; z-index: 100; margin-bottom: 20px; }
 
-        .writing-row { background: #f0f9ff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); line-height: 2.2; font-size: 1.05rem; }
+        .writing-row { background: #f0f9ff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); line-height: 2.2; }
         .input-gap { border: none; border-bottom: 2px solid var(--primary); background: transparent; padding: 2px 5px; font-size: 1rem; font-weight: bold; color: var(--dark); width: 110px; outline: none; text-align: center; }
         .input-gap.correct { color: var(--success); border-color: var(--success); }
         .input-gap.wrong { color: var(--error); border-color: var(--error); }
 
-        #final-section { display: none; text-align: center; margin-top: 30px; padding: 20px; background: #e0f2fe; border-radius: 15px; }
-        .save-btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        
-        /* Task 1 Style - Compact */
-        .tf-row { background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0f2fe; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
-        .btn-tf { padding: 6px 12px; border: 1px solid #bae6fd; background: white; border-radius: 6px; cursor: pointer; color: var(--primary); font-weight: bold; margin-left: 4px; }
+        .tf-row { background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0f2fe; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-tf { padding: 6px 12px; border: 1px solid #bae6fd; background: white; border-radius: 6px; cursor: pointer; color: var(--primary); font-weight: bold; }
         .btn-tf.selected-correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
         .btn-tf.selected-wrong { background: var(--error) !important; color: white !important; border-color: var(--error) !important; }
         .btn-tf.not-selected { opacity: 0.3; }
+
+        #final-section { display: none; text-align: center; margin-top: 30px; }
+        .save-btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
+
+<div class="card">
+    <div class="score-box">Points: <span id="score">0</span> / 140</div>
+    
+    <h1>English Practice 🩺</h1>
+
+    <h2>Task 1: True or False</h2>
+    <div id="tf-container"></div>
+
+    <h2>Task 2: Present Simple</h2>
+    <div id="writing-container"></div>
+
+    <div id="final-section">
+        <h3>Well done! 🎓</h3>
+        <input type="text" id="student-name" placeholder="Your Name" style="padding:10px; border-radius:8px; border:1px solid var(--primary); width:60%;">
+        <button class="save-btn" onclick="saveGame()">Save</button>
+        <div id="lb" style="margin-top:20px; display:none;"><table id="lb-table" style="width:100%;"></table></div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let tfDone = 0;
+    let writeDone = 0;
+
+    const tfQs = [
+        { q: "1. Good language learners don't make mistakes.", a: "False" },
+        { q: "2. It's a good idea to talk with other students.", a: "True" },
+        { q: "3. Take notes only before an exam.", a: "False" },
+        { q: "4. Good learners write down words they learn.", a: "True" },
+        { q: "5. Think of language when you are outside class.", a: "True" },
+        { q: "6. Don't take tests outside of class.", a: "False" }
+    ];
+
+    // В 3 и 5 предложениях добавлены варианты с разными апострофами
+    const writeQs = [
+        { q: "1. What time ______ he ______ work? (START)", a: [["does"], ["start"]] },
+        { q: "2. We ______ to the same place on holiday every year. (GO)", a: [["go"]] },
+        { q: "3. My sister ______ ______ chocolate. (NOT LIKE)", a: [["doesn't", "doesn’t", "doesn‘t"], ["like"]] },
+        { q: "4. ______ they ______ a lot of sport? (DO)", a: [["do"], ["do"]] },
+        { q: "5. I ______ ______ meals very often. (NOT COOK)", a: [["don't", "don’t", "don‘t"], ["cook"]] },
+        { q: "6. Why ______ cats ______ all the time? (SLEEP)", a: [["do"], ["sleep"]] },
+        { q: "7. He ______ to different countries for work. (FLY)", a: [["flies"]] },
+        { q: "8. ______ you ______ this question? (UNDERSTAND)", a: [["do"], ["understand"]] }
+    ];
+
+    // Task 1 Logic
+    const tfCont = document.getElementById('tf-container');
+    tfQs.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'tf-row';
+        row.innerHTML = `<span>${item.q}</span><div class="tf-btns"></div>`;
+        const group = row.querySelector('.tf-btns');
+        ["True", "False"].forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-tf'; btn.innerText = choice;
+            btn.onclick = () => {
+                if (row.dataset.done) return;
+                row.dataset.done = "true";
+                if (choice === item.a) { btn.classList.add('selected-correct'); score += 10; }
+                else { btn.classList.add('selected-wrong'); }
+                group.querySelectorAll('.btn-tf').forEach(b => { if(!b.classList.contains('selected-correct') && !b.classList.contains('selected-wrong')) b.classList.add('not-selected'); });
+                tfDone++; updateProgress();
+            };
+            group.appendChild(btn);
+        });
+        tfCont.appendChild(row);
+    });
+
+    // Task 2 Logic with Multiple Answers Support
+    const wCont = document.getElementById('writing-container');
+    writeQs.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'writing-row';
+        let html = item.q;
+        
+        item.a.forEach((ansArray, i) => {
+            // Сохраняем варианты ответов через запятую в атрибут
+            const ansString = ansArray.join('|');
+            html = html.replace("______", `<input type="text" class="input-gap" data-ans="${ansString}">`);
+        });
+        
+        row.innerHTML = html;
+        wCont.appendChild(row);
+
+        const inputs = row.querySelectorAll('.input-gap');
+        inputs.forEach(input => {
+            input.oninput = () => {
+                const val = input.value.toLowerCase().trim();
+                const possibleAnswers = input.dataset.ans.split('|');
+                
+                if(possibleAnswers.includes(val)) {
+                    input.classList.add('correct');
+                    input.disabled = true;
+                    score += 10;
+                    document.getElementById('score').innerText = score;
+                    if(Array.from(inputs).every(i => i.disabled)) {
+                        writeDone++; updateProgress();
+                    }
+                }
+            };
+            input.onblur = () => {
+                if(input.value !== "" && !input.disabled) {
+                    input.classList.add('wrong');
+                    setTimeout(() => input.classList.remove('wrong'), 800);
+                }
+            };
+        });
+    });
+
+    function updateProgress() {
+        document.getElementById('score').innerText = score;
+        if (tfDone === 6 && writeDone === 8) {
+            document.getElementById('final-section').style.display = 'block';
+        }
+    }
+
+    function saveGame() {
+        const name = document.getElementById('student-name').value || "Student";
+        const res = JSON.parse(localStorage.getItem('med_final_multi') || '[]');
+        res.push({name, score});
+        res.sort((a,b) => b.score - a.score);
+        localStorage.setItem('med_final_multi', JSON.stringify(res.slice(0,5)));
+        document.getElementById('lb').style.display = 'block';
+        document.getElementById('lb-table').innerHTML = res.map(r => `<tr><td>${r.name}</td><td style="text-align:right"><b>${r.score}</b></td></tr>`).join('');
+    }
+</script>
+</body>
+</html><body>
 
 <div class="card">
     <div class="score-box">Points: <span id="score">0</span> / 140</div>
@@ -159,6 +287,7 @@
 </script>
 </body>
 </html>
+
 
 
 
