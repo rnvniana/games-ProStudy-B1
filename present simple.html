@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Medical English: A2 Learning</title>
+    <style>
+        :root { 
+            --primary: #0ea5e9; 
+            --success: #10b981; 
+            --error: #f43f5e; 
+            --bg: #f0f9ff; 
+            --dark: #0c4a6e;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; color: #334155; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1); max-width: 800px; width: 100%; border-top: 8px solid var(--primary); }
+        
+        h1, h2 { color: var(--dark); text-align: center; }
+        .score-box { position: sticky; top: 10px; background: var(--primary); color: white; padding: 12px; border-radius: 50px; text-align: center; font-weight: bold; z-index: 100; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        .reading-text { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; line-height: 1.7; font-size: 1rem; margin-bottom: 25px; }
+        
+        /* Task 1 Styles */
+        .tf-row { background: white; padding: 15px; border-radius: 10px; border: 1px solid #e0f2fe; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .tf-btns { display: flex; gap: 10px; }
+        .btn-tf { padding: 8px 18px; border: 2px solid #bae6fd; background: white; border-radius: 8px; cursor: pointer; font-weight: bold; color: var(--primary); transition: 0.2s; }
+        
+        /* Эффекты выбора */
+        .btn-tf.selected-correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; opacity: 1 !important; }
+        .btn-tf.selected-wrong { background: var(--error) !important; color: white !important; border-color: var(--error) !important; opacity: 1 !important; }
+        .btn-tf.not-selected { opacity: 0.4; border-style: dashed; }
+
+        /* Task 2 Styles */
+        .writing-row { background: #f0f9ff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+        .input-gap { border: none; border-bottom: 2px solid var(--primary); background: transparent; padding: 5px; font-size: 1rem; font-weight: bold; color: var(--dark); width: 130px; outline: none; }
+        .input-gap.correct { color: var(--success); border-color: var(--success); }
+        .input-gap.wrong { color: var(--error); border-color: var(--error); }
+
+        #final-section { display: none; text-align: center; margin-top: 30px; padding: 20px; background: #e0f2fe; border-radius: 15px; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="score-box">Score: <span id="score">0</span> / 140</div>
+    
+    <h1>Medical English: Learner Profile 🩺</h1>
+
+    <h2>Task 1: True or False?</h2>
+    <div class="reading-text">
+        Good language learners don't fear mistakes. They learn from them. 
+        They do group activities, make notes, and use dictionaries. 
+        Outside class, they think in English and do extra practice online. 
+        Fluency comes with motivation and fun!
+    </div>
+    <div id="tf-container"></div>
+
+    <h2>Task 2: Grammar Check (Present Simple)</h2>
+    <div id="writing-container"></div>
+
+    <div id="final-section">
+        <h3>Analysis Complete! 🎓</h3>
+        <input type="text" id="student-name" placeholder="Student Name" style="padding:10px; border-radius:8px; border:1px solid var(--primary); width:70%;">
+        <br>
+        <button class="btn-save" onclick="saveGame()">Save Result</button>
+        <div id="lb" style="margin-top:20px; display:none;"><table id="lb-table" style="width:100%;"></table></div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let completed = 0;
+    const totalTasks = 14;
+
+    const tfQuestions = [
+        { q: "1. Good language learners don't make mistakes.", a: "False" },
+        { q: "2. It's a good idea to talk with other students.", a: "True" },
+        { q: "3. Take notes only before an exam.", a: "False" },
+        { q: "4. Good language learners write down words they learn.", a: "True" },
+        { q: "5. Think of language when you are outside class.", a: "True" },
+        { q: "6. Don't take tests outside of class.", a: "False" }
+    ];
+
+    const writingQuestions = [
+        { q: "1. What time ______ he ______ work? (START)", a: ["does", "start"] },
+        { q: "2. We ______ to the same place on holiday. (GO)", a: ["go"] },
+        { q: "3. My sister ______ chocolate. (NOT LIKE)", a: ["doesn't like"] },
+        { q: "4. ______ they ______ a lot of sport? (DO)", a: ["do", "do"] },
+        { q: "5. I ______ meals very often. (NOT COOK)", a: ["don't cook"] },
+        { q: "6. Why ______ cats ______ all the time? (SLEEP)", a: ["do", "sleep"] },
+        { q: "7. He ______ to different countries. (FLY)", a: ["flies"] },
+        { q: "8. ______ you ______ this question? (UNDERSTAND)", a: ["do", "understand"] }
+    ];
+
+    // Build Task 1 with visibility of choice
+    const tfCont = document.getElementById('tf-container');
+    tfQuestions.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'tf-row';
+        row.innerHTML = `<span>${item.q}</span><div class="tf-btns" id="group-${idx}"></div>`;
+        
+        const group = row.querySelector('.tf-btns');
+        ["True", "False"].forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-tf';
+            btn.innerText = choice;
+            btn.onclick = () => {
+                if (row.dataset.done) return;
+                row.dataset.done = "true";
+                
+                // Проверка ответа
+                const isCorrect = choice === item.a;
+                if (isCorrect) {
+                    btn.classList.add('selected-correct');
+                    score += 10;
+                } else {
+                    btn.classList.add('selected-wrong');
+                }
+
+                // Визуальное затухание невыбранной кнопки
+                group.querySelectorAll('.btn-tf').forEach(b => {
+                    if (!b.classList.contains('selected-correct') && !b.classList.contains('selected-wrong')) {
+                        b.classList.add('not-selected');
+                    }
+                });
+                
+                updateProgress();
+            };
+            group.appendChild(btn);
+        });
+        tfCont.appendChild(row);
+    });
+
+    // Task 2 Logic
+    const wCont = document.getElementById('writing-container');
+    writingQuestions.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'writing-row';
+        let html = item.q;
+        item.a.forEach(ans => html = html.replace("______", `<input type="text" class="input-gap" data-ans="${ans}">`));
+        row.innerHTML = html;
+        wCont.appendChild(row);
+
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.onchange = () => {
+                if(input.value.toLowerCase().trim() === input.dataset.ans.toLowerCase()){
+                    input.classList.add('correct');
+                    input.disabled = true;
+                    score += 10;
+                    if(Array.from(inputs).every(i => i.classList.contains('correct'))) {
+                        completed++;
+                        updateProgress();
+                    }
+                } else {
+                    input.classList.add('wrong');
+                    setTimeout(() => input.classList.remove('wrong'), 800);
+                }
+            };
+        });
+    });
+
+    function updateProgress() {
+        document.getElementById('score').innerText = score;
+        const totalDone = document.querySelectorAll('.tf-row[data-done]').length + completed;
+        if (totalDone === totalTasks) finish();
+    }
+
+    function finish() {
+        document.getElementById('final-section').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function saveGame() {
+        const name = document.getElementById('student-name').value || "Student";
+        const results = JSON.parse(localStorage.getItem('med_v2_results') || '[]');
+        results.push({name, score});
+        results.sort((a,b) => b.score - a.score);
+        localStorage.setItem('med_v2_results', JSON.stringify(results.slice(0,5)));
+        document.getElementById('lb').style.display = 'block';
+        document.getElementById('lb-table').innerHTML = results.map(r => 
+            `<tr style="border-bottom:1px solid #bae6fd"><td style="padding:8px">${r.name}</td><td style="text-align:right"><b>${r.score}</b></td></tr>`).join('');
+    }
+</script>
+</body>
+</html>

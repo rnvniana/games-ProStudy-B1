@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Practice: Helping Others</title>
+    <style>
+        :root { --primary: #f472b6; --success: #34d399; --error: #fb7185; --bg: #fff1f2; --rose: #be185d; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; color: #4b5563; -webkit-tap-highlight-color: transparent; }
+        .card { background: white; padding: 1.5rem; border-radius: 1.5rem; box-shadow: 0 10px 20px rgba(244, 114, 182, 0.1); max-width: 600px; width: 100%; border: 2px solid #fce7f3; }
+        
+        h1, h2 { color: var(--rose); text-align: center; }
+        .score-box { position: sticky; top: 10px; background: var(--primary); color: white; padding: 10px; border-radius: 30px; text-align: center; font-weight: bold; z-index: 100; margin-bottom: 20px; }
+
+        /* Task 1 Styles */
+        .match-row { background: #fffbff; padding: 12px; border-radius: 12px; border: 1px solid #fce7f3; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .drop-zone { border-bottom: 3px dashed var(--primary); min-width: 100px; display: inline-block; text-align: center; font-weight: bold; color: var(--rose); cursor: pointer; min-height: 25px; }
+        .drop-zone.filled { border: none; color: var(--success); border-bottom: 3px solid var(--success); }
+
+        /* Task 2 Styles */
+        .text-content { line-height: 2.2; background: #fffbff; padding: 20px; border-radius: 15px; border: 1px solid #fce7f3; }
+        .gap { display: inline-block; width: 45px; border-bottom: 2px solid var(--primary); text-align: center; font-weight: bold; cursor: pointer; color: var(--rose); }
+        .gap.filled { color: var(--success); border-color: var(--success); width: auto; padding: 0 5px; }
+
+        .words-bank { display: flex; flex-wrap: wrap; gap: 8px; background: #fdf2f8; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 2px dashed var(--primary); justify-content: center; }
+        .word-item { padding: 8px 12px; background: white; border: 2px solid var(--primary); border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--primary); box-shadow: 0 3px 0 #fbcfe8; }
+        
+        #final-section { display: none; text-align: center; margin-top: 30px; padding: 20px; background: #fdf2f8; border-radius: 20px; }
+        .cat-img { width: 180px; border-radius: 20px; border: 4px solid white; margin-bottom: 15px; }
+        .save-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td, th { padding: 10px; border-bottom: 1px solid #fce7f3; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="score-box">Score: <span id="score">0</span></div>
+    
+    <h1>Helping Others 🌸</h1>
+
+    <h2>Task 1: Matching</h2>
+    <div class="words-bank" id="bank-t1"></div>
+    <div id="task1-container"></div>
+
+    <h2>Task 2: Fill the Gaps</h2>
+    <div class="words-bank" id="bank-t2"></div>
+    <div class="text-content" id="task2-text"></div>
+
+    <div id="final-section">
+        <img src="https://cataas.com/cat/says/Great%20Job!" class="cat-img">
+        <h3>"Excellent work! You're a star!"</h3>
+        <input type="text" id="p-name" placeholder="Your name" style="padding:10px; border-radius:10px; border:2px solid var(--primary); width:80%;">
+        <button class="save-btn" onclick="saveResult()">Save Score</button>
+        <div id="results-table" style="display:none; margin-top:20px;">
+            <h3>🏆 Leaders</h3>
+            <table id="lb-body"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let completed = 0;
+    let selectedWord = null;
+    let selectedElem = null;
+
+    const t1Data = [
+        { q: "1. You can lend me a hand with these boxes,", a: "can't you?" },
+        { q: "2. Helping others makes us feel better,", a: "doesn't it?" },
+        { q: "3. He has gone the extra mile for the team,", a: "hasn't he?" },
+        { q: "4. You won't forget to show him the ropes,", a: "will you?" },
+        { q: "5. I’m providing a listening ear for you,", a: "aren't I?" },
+        { q: "6. They didn't scratch your back in return,", a: "did they?" }
+    ];
+
+    const t2Words = ["-", "an", "a", "a", "a", "the", "-", "a", "a", "the", "a", "-", "a", "a", "-", "the", "the", "-", "the", "-", "-"];
+    const t2Correct = ["-", "an", "a", "a", "a", "the", "-", "a", "a", "the", "a", "-", "a", "a", "-", "the", "the", "-", "the", "-", "-"];
+
+    const t2RawText = `Helping (1) ____ other people is (2) ____ essential part of building (3) ____ strong community. When we decide to lend (4) ____ hand, we are not just doing (5) ____ favor; we are improving (6) ____ quality of (7) ____ life for everyone. Imagine (8) ____ situation where (9) ____ new colleague joins your office. If you show them (10) ____ ropes, they will adapt much faster. It doesn’t take (11) ____ lot of (12) ____ effort to be kind. Sometimes, just providing (13) ____ listening ear to (14) ____ friend in (15) ____ trouble can lift their spirits. In (16) ____ modern world, we often follow (17) ____ principle: "Scratch my back and I’ll scratch yours." While (18) ____ mutual help is great, (19) ____ best kind of (20) ____ support is the one given without expecting anything in (21) ____ return.`;
+
+    // Init Task 1
+    const bank1 = document.getElementById('bank-t1');
+    [...t1Data].map(x => x.a).sort(() => Math.random() - 0.5).forEach(word => {
+        const div = createWordItem(word);
+        bank1.appendChild(div);
+    });
+
+    const t1Cont = document.getElementById('task1-container');
+    t1Data.forEach((item, i) => {
+        const row = document.createElement('div');
+        row.className = 'match-row';
+        row.innerHTML = `<span>${item.q} <span class="drop-zone" data-ans="${item.a}">?</span></span>`;
+        row.querySelector('.drop-zone').onclick = function() { handleDrop(this, 10); };
+        t1Cont.appendChild(row);
+    });
+
+    // Init Task 2
+    const bank2 = document.getElementById('bank-t2');
+    ["a", "an", "the", "-"].forEach(word => {
+        const div = createWordItem(word);
+        bank2.appendChild(div);
+    });
+
+    const t2Cont = document.getElementById('task2-text');
+    let processedText = t2RawText;
+    for(let i=1; i<=21; i++) {
+        processedText = processedText.replace(`(${i}) ____`, `<span class="gap" data-ans="${t2Correct[i-1]}" id="gap-${i}">(${i})</span>`);
+    }
+    t2Cont.innerHTML = processedText;
+    document.querySelectorAll('.gap').forEach(gap => {
+        gap.onclick = function() { handleDrop(this, 5); };
+    });
+
+    function createWordItem(word) {
+        const div = document.createElement('div');
+        div.className = 'word-item';
+        div.innerText = word;
+        div.onclick = () => {
+            document.querySelectorAll('.word-item').forEach(el => el.style.background = 'white');
+            div.style.background = '#fbcfe8';
+            selectedWord = word;
+            selectedElem = div;
+        };
+        return div;
+    }
+
+    function handleDrop(el, points) {
+        if (!selectedWord || el.classList.contains('filled')) return;
+        if (selectedWord === el.dataset.ans) {
+            el.innerText = selectedWord;
+            el.classList.add('filled');
+            score += points;
+            completed++;
+            if(selectedElem.parentElement.id === 'bank-t1') selectedElem.style.display = 'none';
+            selectedWord = null;
+        } else {
+            const oldText = el.innerText;
+            el.innerText = "❌";
+            setTimeout(() => { if(!el.classList.contains('filled')) el.innerText = oldText; }, 600);
+            score = Math.max(0, score - 2);
+        }
+        document.getElementById('score').innerText = score;
+        if (completed === (6 + 21)) finish();
+    }
+
+    function finish() {
+        document.getElementById('final-section').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function saveResult() {
+        const name = document.getElementById('p-name').value || "Star";
+        const results = JSON.parse(localStorage.getItem('helping_results') || '[]');
+        results.push({name, score});
+        results.sort((a,b) => b.score - a.score);
+        localStorage.setItem('helping_results', JSON.stringify(results.slice(0,5)));
+        
+        const lb = document.getElementById('lb-body');
+        lb.innerHTML = results.map(r => `<tr><td>${r.name}</td><td>${r.score} pts</td></tr>`).join('');
+        document.getElementById('results-table').style.display = 'block';
+    }
+</script>
+</body>
+</html>
