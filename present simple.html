@@ -13,7 +13,6 @@
             --dark: #0c4a6e;
         }
         
-        /* Исправление отображения: всё в одну колонку */
         body { 
             font-family: 'Segoe UI', sans-serif; 
             background: var(--bg); 
@@ -37,7 +36,7 @@
             box-sizing: border-box;
         }
         
-        h1, h2 { color: var(--dark); text-align: center; margin-bottom: 20px; }
+        h1, h2 { color: var(--dark); text-align: center; margin-bottom: 15px; }
         
         .score-box { 
             position: sticky; 
@@ -53,7 +52,18 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* Задания */
+        /* Блок с текстом задания */
+        .reading-passage {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
         .q-row { 
             background: #f8fafc; 
             padding: 15px; 
@@ -79,11 +89,10 @@
         .input-gap.correct { color: var(--success); border-color: var(--success); }
         .input-gap.wrong { color: var(--error); border-color: var(--error); }
 
-        /* True/False кнопки */
         .tf-row { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0f2fe; margin-bottom: 8px; }
         .btn-tf { padding: 8px 15px; border: 1px solid #bae6fd; background: white; border-radius: 8px; cursor: pointer; color: var(--primary); font-weight: bold; margin-left: 5px; }
-        .btn-tf.selected-correct { background: var(--success) !important; color: white !important; }
-        .btn-tf.selected-wrong { background: var(--error) !important; color: white !important; }
+        .btn-tf.selected-correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
+        .btn-tf.selected-wrong { background: var(--error) !important; color: white !important; border-color: var(--error) !important; }
         .btn-tf.not-selected { opacity: 0.3; }
 
         #final-section { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e0f2fe; border-radius: 15px; width: 100%; max-width: 650px; }
@@ -92,10 +101,21 @@
 </head>
 <body>
 
-    <div class="score-box">Score: <span id="score">0</span></div>
+    <div class="score-box">Score: <span id="score">0</span> / 140</div>
 
     <div class="card">
-        <h2>Task 1: True or False</h2>
+        <h2>Task 1: Reading Comprehension</h2>
+        
+        <div class="reading-passage">
+            <strong>What makes a good language learner?</strong><br>
+            Many studies ask this question. There are some things that good language learners do and some things they don't do. 
+            Don't be afraid of making mistakes. Good language learners notice their mistakes and learn from them. 
+            Do group activities and talk with other students. Make notes during every class to help you remember. 
+            Use a dictionary to check the meaning of words. Think in the language outside the classroom. 
+            Do extra practice online and enjoy the process. Watch films, listen to songs, and play games. 
+            It's never too late to become a good learner!
+        </div>
+
         <div id="tf-container"></div>
     </div>
 
@@ -105,9 +125,9 @@
     </div>
 
     <div id="final-section">
-        <h3>Excellent Work! 🎓</h3>
-        <input type="text" id="student-name" placeholder="Enter Name" style="padding:10px; border-radius:8px; width:60%; margin-bottom:10px;"><br>
-        <button class="save-btn" onclick="saveResult()">Save Result</button>
+        <h3>Lesson Completed! 🎓</h3>
+        <input type="text" id="student-name" placeholder="Student Name" style="padding:10px; border-radius:8px; width:60%; margin-bottom:10px;"><br>
+        <button class="save-btn" onclick="saveResult()">Save Score</button>
         <div id="lb" style="margin-top:20px; display:none;"><table id="lb-table" style="width:100%"></table></div>
     </div>
 
@@ -126,14 +146,14 @@
     ];
 
     const writeData = [
-        { id: 1, q: "1. What time ______ he ______ work? (START)", a: [["does"], ["start"]] },
-        { id: 2, q: "2. We ______ to the same place on holiday. (GO)", a: [["go"]] },
-        { id: 3, q: "3. My sister ______ ______ chocolate. (NOT LIKE)", a: [["doesn't", "doesn’t", "doesn‘t"], ["like"]] },
-        { id: 4, q: "4. ______ they ______ a lot of sport? (DO)", a: [["do"], ["do"]] },
-        { id: 5, q: "5. I ______ ______ meals very often. (NOT COOK)", a: [["don't", "don’t", "don‘t"], ["cook"]] },
-        { id: 6, q: "6. Why ______ cats ______ all the time? (SLEEP)", a: [["do"], ["sleep"]] },
-        { id: 7, q: "7. He ______ to different countries. (FLY)", a: [["flies"]] },
-        { id: 8, q: "8. ______ you ______ this question? (UNDERSTAND)", a: [["do"], ["understand"]] }
+        { q: "1. What time ______ he ______ work? (START)", a: [["does"], ["start"]] },
+        { q: "2. We ______ to the same place on holiday. (GO)", a: [["go"]] },
+        { q: "3. My sister ______ ______ chocolate. (NOT LIKE)", a: [["doesn't", "doesn’t", "doesn‘t"], ["like"]] },
+        { q: "4. ______ they ______ a lot of sport? (DO)", a: [["do"], ["do"]] },
+        { q: "5. I ______ ______ meals very often. (NOT COOK)", a: [["don't", "don’t", "don‘t"], ["cook"]] },
+        { q: "6. Why ______ cats ______ all the time? (SLEEP)", a: [["do"], ["sleep"]] },
+        { q: "7. He ______ to different countries. (FLY)", a: [["flies"]] },
+        { q: "8. ______ you ______ this question? (UNDERSTAND)", a: [["do"], ["understand"]] }
     ];
 
     // Build Task 1
@@ -196,10 +216,10 @@
 
     function saveResult() {
         const name = document.getElementById('student-name').value || "Student";
-        const results = JSON.parse(localStorage.getItem('med_v5_results') || '[]');
+        const results = JSON.parse(localStorage.getItem('med_final_v5')) || [];
         results.push({name, score});
         results.sort((a,b) => b.score - a.score);
-        localStorage.setItem('med_v5_results', JSON.stringify(results.slice(0,5)));
+        localStorage.setItem('med_final_v5', JSON.stringify(results.slice(0,5)));
         document.getElementById('lb').style.display = 'block';
         document.getElementById('lb-table').innerHTML = results.map(r => `<tr><td>${r.name}</td><td style="text-align:right"><b>${r.score}</b></td></tr>`).join('');
     }
