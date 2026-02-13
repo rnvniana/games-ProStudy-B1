@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 7 - Matching Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E4BC;
+            --white: #FFFFFF;
+            --dark: #2C2C2C;
+            --bg: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container {
+            background: var(--white);
+            max-width: 850px; width: 100%;
+            padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            border: 1px solid var(--gold-light);
+        }
+
+        h1 { color: var(--gold); text-align: center; letter-spacing: 2px; text-transform: uppercase; }
+        h2 { border-left: 4px solid var(--gold); padding-left: 15px; margin-top: 40px; font-size: 1.2rem; }
+
+        /* Стили для перетаскиваемых элементов */
+        .draggable-container {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center; margin: 20px 0;
+            padding: 20px; border: 2px dashed var(--gold-light);
+            border-radius: 15px; background: #fffdf9;
+        }
+
+        .word {
+            background: var(--white);
+            border: 2px solid var(--gold);
+            padding: 8px 16px; border-radius: 8px;
+            cursor: grab; font-weight: bold; color: var(--gold);
+            user-select: none; transition: all 0.2s;
+            box-shadow: 2px 2px 5px rgba(212, 175, 55, 0.2);
+        }
+
+        .word:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Стили для зон сброса (дроп-зон) */
+        .drop-zone {
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            min-width: 120px; height: 32px;
+            border-bottom: 2px solid var(--gold-light);
+            margin: 0 5px; vertical-align: middle;
+            transition: background 0.3s;
+        }
+
+        .drop-zone.hover { background: var(--gold-light); }
+        .drop-zone.filled { border: none; }
+        .drop-zone .word { box-shadow: none; padding: 4px 10px; font-size: 0.9rem; }
+
+        .question-block { line-height: 3; margin-bottom: 30px; }
+
+        .btn-gold {
+            display: block; width: 100%; padding: 18px;
+            background: var(--gold); color: white;
+            border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            margin-top: 30px; transition: 0.3s;
+        }
+
+        .btn-gold:hover { background: #b8952e; transform: translateY(-2px); }
+
+        #results-area {
+            display: none; text-align: center; margin-top: 30px;
+            padding: 30px; border: 3px solid var(--gold); border-radius: 20px; background: #fff;
+        }
+
+        .leaderboard { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        .leaderboard td { padding: 10px; border-bottom: 1px solid var(--gold-light); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Unit 7 - Matching Test</h1>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <input type="text" id="student-name" placeholder="Student Name" style="padding: 10px; width: 250px; border: none; border-bottom: 2px solid var(--gold); outline: none; text-align: center; font-family: 'Montserrat';">
+    </div>
+
+    <h2>Task 1 - Phrasal Verbs (Drag & Drop)</h2>
+    <div class="draggable-container" id="bank-t1">
+        <div class="word" draggable="true" id="w1">come round</div>
+        <div class="word" draggable="true" id="w2">fall out</div>
+        <div class="word" draggable="true" id="w3">get on</div>
+        <div class="word" draggable="true" id="w4">get together</div>
+        <div class="word" draggable="true" id="w5">hang out</div>
+        <div class="word" draggable="true" id="w6">look after</div>
+        <div class="word" draggable="true" id="w7">make up</div>
+        <div class="word" draggable="true" id="w8">split up</div>
+    </div>
+
+    <div class="question-block">
+        1. I don’t <div class="drop-zone" data-ans="get on"></div> very well with my brother. We had a big argument last week. I don’t know if we’ll ever <div class="drop-zone" data-ans="make up"></div>. <br>
+        2. Some of my friends <div class="drop-zone" data-ans="hang out"></div> at the youth centre, but I don’t go there. <br>
+        3. Tom and Harriet weren’t together for long. They <div class="drop-zone" data-ans="split up"></div> after six weeks. <br>
+        4. I know you’re nervous, but you mustn’t worry. I’ll <div class="drop-zone" data-ans="look after"></div> you. <br>
+        5. I always <div class="drop-zone" data-ans="get together"></div> with my friends after school, but they never <div class="drop-zone" data-ans="come round"></div> to my place. <br>
+        6. It isn’t a serious problem, and I’m sure we won’t <div class="drop-zone" data-ans="fall out"></div> about it.
+    </div>
+
+    <h2>Task 2 - Grammar Rules</h2>
+    <div class="draggable-container" id="bank-t2">
+        <div class="word" draggable="true" id="g1">should</div>
+        <div class="word" draggable="true" id="g2">shouldn't</div>
+        <div class="word" draggable="true" id="g3">should</div>
+    </div>
+
+    <div class="question-block">
+        We use: <br>
+        a <div class="drop-zone" data-ans="should"></div> to say something is a good idea. <br>
+        b <div class="drop-zone" data-ans="shouldn't"></div> to say something isn't a good idea. <br>
+        c <div class="drop-zone" data-ans="should"></div> in questions to ask for advice.
+    </div>
+
+    <button class="btn-gold" onclick="checkAnswers()">FINISH TEST ✨</button>
+</div>
+
+<div id="results-area">
+    <h2 id="cheer-text" style="color: var(--gold);"></h2>
+    <h3 id="score-display"></h3>
+    <button class="btn-gold" style="background: var(--dark);" onclick="downloadPDF()">DOWNLOAD REPORT 📑</button>
+    
+    <div style="margin-top:30px;">
+        <h4 style="color: var(--gold);">LEADERBOARD</h4>
+        <table class="leaderboard" id="lb-table"></table>
+    </div>
+</div>
+
+<script>
+    // Логика Drag & Drop
+    const words = document.querySelectorAll('.word');
+    const zones = document.querySelectorAll('.drop-zone');
+
+    words.forEach(word => {
+        word.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        });
+    });
+
+    zones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('dragenter', (e) => zone.classList.add('hover'));
+        zone.addEventListener('dragleave', (e) => zone.classList.remove('hover'));
+        
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('hover');
+            const id = e.dataTransfer.getData('text');
+            const draggedElement = document.getElementById(id);
+            
+            // Если в зоне уже есть слово, возвращаем его в банк
+            if (zone.firstChild) {
+                const currentWord = zone.firstChild;
+                // Находим исходный банк (t1 или t2)
+                const targetBank = draggedElement.parentElement.id.includes('t1') ? 'bank-t1' : 'bank-t2';
+                document.getElementById(targetBank).appendChild(currentWord);
+            }
+            
+            zone.appendChild(draggedElement);
+            zone.classList.add('filled');
+        });
+    });
+
+    function checkAnswers() {
+        const name = document.getElementById('student-name').value;
+        if (!name) return alert("Please enter your name!");
+
+        let score = 0;
+        const total = zones.length;
+
+        zones.forEach(zone => {
+            const userWord = zone.firstChild ? zone.firstChild.innerText : "";
+            const correct = zone.dataset.ans;
+            
+            if (userWord === correct) {
+                score++;
+                zone.style.backgroundColor = "#f6ffed";
+            } else {
+                zone.style.backgroundColor = "#fff1f0";
+            }
+        });
+
+        const cheers = ["Good job!", "You did great!", "Excellent work!", "Amazing!", "Fantastic!"];
+        document.getElementById('results-area').style.display = 'block';
+        document.getElementById('cheer-text').innerText = cheers[Math.floor(Math.random()*cheers.length)];
+        document.getElementById('score-display').innerText = `Score: ${score} / ${total}`;
+        
+        saveResult(name, score);
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function saveResult(name, score) {
+        let scores = JSON.parse(localStorage.getItem('match_scores') || '[]');
+        scores.push({name, score});
+        scores.sort((a,b) => b.score - a.score);
+        localStorage.setItem('match_scores', JSON.stringify(scores.slice(0, 5)));
+        
+        const table = document.getElementById('lb-table');
+        table.innerHTML = scores.map(s => `<tr><td>${s.name}</td><td><b>${s.score}</b></td></tr>`).join('');
+    }
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const name = document.getElementById('student-name').value;
+        
+        doc.setFontSize(22);
+        doc.setTextColor(212, 175, 55);
+        doc.text("Unit 7 - Matching Report", 20, 20);
+        
+        doc.setFontSize(14);
+        doc.setTextColor(44, 44, 44);
+        doc.text(`Student: ${name}`, 20, 35);
+        doc.text(`Result: ${document.getElementById('score-display').innerText}`, 20, 45);
+        doc.line(20, 50, 190, 50);
+
+        let y = 65;
+        zones.forEach((zone, i) => {
+            const userVal = zone.firstChild ? zone.firstChild.innerText : "empty";
+            const correct = zone.dataset.ans;
+            const status = (userVal === correct) ? "CORRECT" : `WRONG (Correct: ${correct})`;
+            
+            doc.setFontSize(11);
+            doc.text(`${i+1}. You matched: "${userVal}" - ${status}`, 20, y);
+            y += 10;
+        });
+
+        doc.save(`${name}_Unit7_Matching.pdf`);
+    }
+</script>
+
+</body>
+</html>
