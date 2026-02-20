@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airport Grammar Terminal</title>
+    <style>
+        :root { --airport-blue: #003366; --safety-yellow: #ffcc00; --sky-bg: #e6f2ff; --text: #333; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: var(--sky-bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .terminal-container { background: white; width: 100%; max-width: 700px; border-radius: 10px; border: 4px solid var(--airport-blue); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        
+        /* Header */
+        .header { background: var(--airport-blue); color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; letter-spacing: 2px; font-size: 24px; }
+        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.8; }
+
+        /* General UI */
+        .content { padding: 30px; }
+        .hidden { display: none; }
+        .btn { background: var(--safety-yellow); color: #000; border: none; padding: 15px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; }
+        .btn:hover { background: #e6b800; }
+        
+        /* Task Styles */
+        .question { margin-bottom: 20px; padding: 15px; border-left: 5px solid var(--airport-blue); background: #f9f9f9; }
+        .word-bank { background: #333; color: var(--safety-yellow); padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 20px; font-family: monospace; }
+        select, input { padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 15px; }
+        
+        /* Final Boarding Pass Style */
+        #results { text-align: center; border: 2px dashed var(--airport-blue); padding: 20px; margin-top: 20px; border-radius: 10px; }
+        .score { font-size: 40px; font-weight: bold; color: var(--airport-blue); }
+    </style>
+</head>
+<body>
+
+<div class="terminal-container">
+    <div class="header">
+        <h1>INTERNATIONAL TERMINAL</h1>
+        <p>FLIGHT ACADEMY CHECK-IN</p>
+    </div>
+
+    <div class="content">
+        <div id="reg">
+            <h3>Passenger Identification</h3>
+            <p>Please enter your full name to receive your boarding pass:</p>
+            <input type="text" id="pName" placeholder="Full Name..." style="width: 100%; margin-bottom: 10px;">
+            <button class="btn" onclick="startTask(1)">PRINT BOARDING PASS ➔</button>
+        </div>
+
+        <div id="task1" class="hidden">
+            <h3>Gate 1: Vocabulary Match</h3>
+            <div class="word-bank">baggage | check-in desk | customs | passport | queue | sign | ticket</div>
+            <div class="question">1. Arrived for flight: <select id="t1_1"><option value="">--</option><option>check-in desk</option><option>baggage</option></select></div>
+            <div class="question">2. Document for countries: <select id="t1_2"><option value="">--</option><option>ticket</option><option>passport</option></select></div>
+            <div class="question">3. Proof of payment: <select id="t1_3"><option value="">--</option><option>ticket</option><option>sign</option></select></div>
+            <div class="question">4. Bag examination area: <select id="t1_4"><option value="">--</option><option>customs</option><option>queue</option></select></div>
+            <div class="question">5. Notice/Instructions: <select id="t1_5"><option value="">--</option><option>sign</option><option>baggage</option></select></div>
+            <div class="question">6. Traveling clothes/things: <select id="t1_6"><option value="">--</option><option>baggage</option><option>queue</option></select></div>
+            <div class="question">7. Line of people: <select id="t1_7"><option value="">--</option><option>queue</option><option>customs</option></select></div>
+            <button class="btn" onclick="startTask(2)">PROCEED TO GATE 2 ➔</button>
+        </div>
+
+        <div id="task2" class="hidden">
+            <h3>Gate 2: Compound Nouns</h3>
+            <p>Match the prefix to the airport noun:</p>
+            <div class="question">1. Departure <select id="t2_1"><option value="">--</option><option value="c">gate</option><option value="x">check</option></select></div>
+            <div class="question">2. Passport <select id="t2_2"><option value="">--</option><option value="d">control</option><option value="x">pass</option></select></div>
+            <div class="question">3. Security <select id="t2_3"><option value="">--</option><option value="a">check</option><option value="x">hall</option></select></div>
+            <div class="question">4. Boarding <select id="t2_4"><option value="">--</option><option value="e">pass</option><option value="x">control</option></select></div>
+            <div class="question">5. Baggage <select id="t2_5"><option value="">--</option><option value="b">hall</option><option value="x">gate</option></select></div>
+            <button class="btn" onclick="startTask(3)">FINAL SECURITY CHECK ➔</button>
+        </div>
+
+        <div id="task3" class="hidden">
+            <h3>Gate 3: Clear for Takeoff</h3>
+            <div class="question">1. Show your... pass: <select id="t3_1"><option value="">--</option><option value="b">boarding</option><option>departure</option></select></div>
+            <div class="question">2. Bags opened at...: <select id="t3_2"><option value="">--</option><option>passport</option><option value="c">security</option></select></div>
+            <div class="question">3. Don't know where to go? Look at a...: <select id="t3_3"><option value="">--</option><option>ticket</option><option value="c">sign</option></select></div>
+            <div class="question">4. Collect bags from the... hall: <select id="t3_4"><option value="">--</option><option value="b">baggage</option><option>departure</option></select></div>
+            <div class="question">5. Moving countries? Need a...: <select id="t3_5"><option value="">--</option><option value="b">passport</option><option>sign</option></select></div>
+            <div class="question">6. Waiting to get on? Stand in a...: <select id="t3_6"><option value="">--</option><option value="c">queue</option><option>customs</option></select></div>
+            <div class="question">7. Last place is the departure...: <select id="t3_7"><option value="">--</option><option value="a">gate</option><option>check-in</option></select></div>
+            <button class="btn" onclick="calc()">COMPLETE FLIGHT 🏁</button>
+        </div>
+
+        <div id="results" class="hidden">
+            <h2 style="color: var(--airport-blue);">FLIGHT ARRIVED!</h2>
+            <p>Passenger: <span id="resName" style="font-weight: bold;"></span></p>
+            <div class="score" id="resScore">0/19</div>
+            <p id="resRating" style="font-weight: bold; font-size: 18px; margin: 15px 0;"></p>
+            <button class="btn" onclick="location.reload()">NEW PASSENGER</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function startTask(num) {
+        if(num === 1 && !document.getElementById('pName').value) return alert("Please enter passenger name!");
+        document.querySelectorAll('.content > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(num === 1 ? 'task1' : num === 2 ? 'task2' : 'task3').classList.remove('hidden');
+    }
+
+    function calc() {
+        let s = 0;
+        // T1
+        if(document.getElementById('t1_1').value === "check-in desk") s++;
+        if(document.getElementById('t1_2').value === "passport") s++;
+        if(document.getElementById('t1_3').value === "ticket") s++;
+        if(document.getElementById('t1_4').value === "customs") s++;
+        if(document.getElementById('t1_5').value === "sign") s++;
+        if(document.getElementById('t1_6').value === "baggage") s++;
+        if(document.getElementById('t1_7').value === "queue") s++;
+        // T2
+        if(document.getElementById('t2_1').value === "c") s++;
+        if(document.getElementById('t2_2').value === "d") s++;
+        if(document.getElementById('t2_3').value === "a") s++;
+        if(document.getElementById('t2_4').value === "e") s++;
+        if(document.getElementById('t2_5').value === "b") s++;
+        // T3
+        if(document.getElementById('t3_1').value === "b") s++;
+        if(document.getElementById('t3_2').value === "c") s++;
+        if(document.getElementById('t3_3').value === "c") s++;
+        if(document.getElementById('t3_4').value === "b") s++;
+        if(document.getElementById('t3_5').value === "b") s++;
+        if(document.getElementById('t3_6').value === "c") s++;
+        if(document.getElementById('t3_7').value === "a") s++;
+
+        document.getElementById('task3').classList.add('hidden');
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('resName').innerText = document.getElementById('pName').value;
+        document.getElementById('resScore').innerText = s + " / 19";
+        
+        let rating = s > 15 ? "⭐⭐⭐ First Class" : s > 10 ? "⭐⭐ Business Class" : "⭐ Economy Class";
+        document.getElementById('resRating').innerText = "Rating: " + rating;
+    }
+</script>
+</body>
+</html>
