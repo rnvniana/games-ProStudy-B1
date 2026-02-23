@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Grammar Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --pastel-pink: #ffe4e6;
+            --pastel-mint: #f0fdf4;
+            --pastel-purple: #f5f3ff;
+            --gold: #D4AF37;
+            --soft-text: #4b5563;
+            --star-yellow: #fbbf24;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--pastel-purple);
+            background-image: radial-gradient(#fff 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--soft-text);
+            margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container {
+            background: white;
+            max-width: 800px; width: 100%;
+            padding: 30px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 4px solid var(--pastel-pink);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 { color: #db2777; text-align: center; font-size: 1.8rem; margin-bottom: 25px; }
+        h2 { background: var(--pastel-mint); color: #059669; padding: 10px 20px; border-radius: 15px; font-size: 1.1rem; margin-top: 30px; display: inline-block; }
+
+        .name-input-box { text-align: center; margin-bottom: 25px; }
+        .name-input {
+            border: none; border-bottom: 3px solid var(--pastel-pink);
+            padding: 10px; width: 70%; font-family: 'Quicksand';
+            font-size: 1.1rem; text-align: center; outline: none;
+            color: #db2777;
+        }
+
+        .word-bank {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; margin: 20px 0;
+            padding: 15px; background: var(--pastel-purple);
+            border-radius: 20px; border: 2px dashed var(--pastel-pink);
+        }
+
+        .word-item {
+            background: white; border: 2px solid var(--pastel-pink);
+            padding: 8px 16px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; color: #db2777;
+            transition: all 0.2s; user-select: none; font-size: 0.9rem;
+        }
+
+        .word-item.selected {
+            background: #db2777; color: white;
+            transform: scale(1.1); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.3);
+        }
+
+        .word-item.used { opacity: 0.3; cursor: default; pointer-events: none; }
+
+        .drop-zone {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 130px; height: 32px; border-bottom: 2px solid var(--pastel-pink);
+            margin: 0 5px; vertical-align: middle; cursor: pointer;
+            transition: background 0.2s; border-radius: 8px; font-weight: bold;
+        }
+
+        .drop-zone:hover { background: var(--pastel-pink); }
+        .drop-zone.filled { color: #be185d; border: 1px solid var(--pastel-pink); background: #fff5f5; }
+
+        .dialogue-box { 
+            line-height: 2.2; background: #fff; padding: 20px; 
+            border-radius: 20px; border: 1px solid #f3f4f6;
+        }
+
+        .btn-submit {
+            display: block; width: 100%; padding: 18px;
+            background: #db2777; color: white;
+            border: none; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            margin-top: 30px; box-shadow: 0 6px 0 #9d174d;
+            transition: 0.2s;
+        }
+        .btn-submit:active { transform: translateY(4px); box-shadow: 0 2px 0 #9d174d; }
+
+        /* Cat Section */
+        #cat-final {
+            display: none; text-align: center; margin-top: 30px;
+            animation: popIn 0.5s ease-out forwards;
+        }
+
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .cat-img { width: 150px; height: auto; margin-bottom: 10px; }
+        .star-msg { font-size: 2rem; color: var(--gold); font-weight: bold; text-shadow: 1px 1px #fff; }
+
+        .pdf-btn {
+            background: var(--gold); box-shadow: 0 6px 0 #b8952e;
+            margin-top: 20px; font-size: 1rem; width: auto; padding: 12px 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="test-main">
+    <h1>✨ Travel & Plans ✨</h1>
+
+    <div class="name-input-box">
+        <input type="text" id="student-name" class="name-input" placeholder="Your Name Here...">
+    </div>
+
+    <h2>1. 'be going to' Adventure</h2>
+    <div class="word-bank" id="bank-t1">
+        <div class="word-item" onclick="selectWord(this)">are going to fly</div>
+        <div class="word-item" onclick="selectWord(this)">are going to have</div>
+        <div class="word-item" onclick="selectWord(this)">are you going to do</div>
+        <div class="word-item" onclick="selectWord(this)">are going to visit</div>
+        <div class="word-item" onclick="selectWord(this)">are going to go</div>
+        <div class="word-item" onclick="selectWord(this)">am not going to walk</div>
+        <div class="word-item" onclick="selectWord(this)">am going to find</div>
+        <div class="word-item" onclick="selectWord(this)">Are you going to try</div>
+        <div class="word-item" onclick="selectWord(this)">am not going to eat</div>
+    </div>
+
+    <div class="dialogue-box">
+        <b>Olivia:</b> We <span class="drop-zone" data-ans="are going to fly" onclick="placeWord(this)"></span> to Tokyo! <br>
+        <b>Zayne:</b> You <span class="drop-zone" data-ans="are going to have" onclick="placeWord(this)"></span> a great time! What <span class="drop-zone" data-ans="are you going to do" onclick="placeWord(this)"></span>? <br>
+        <b>Olivia:</b> We <span class="drop-zone" data-ans="are going to visit" onclick="placeWord(this)"></span> a cat café. <br>
+        <b>Mum:</b> And we <span class="drop-zone" data-ans="are going to go" onclick="placeWord(this)"></span> shopping! <br>
+        <b>Olivia:</b> What? I <span class="drop-zone" data-ans="am not going to walk" onclick="placeWord(this)"></span> around shops! I <span class="drop-zone" data-ans="am going to find" onclick="placeWord(this)"></span> a gaming café. <br>
+        <b>Zayne:</b> <span class="drop-zone" data-ans="Are you going to try" onclick="placeWord(this)"></span> sushi? <br>
+        <b>Mum:</b> No way! I <span class="drop-zone" data-ans="am not going to eat" onclick="placeWord(this)"></span> uncooked fish!
+    </div>
+
+    <h2>2. Travel Phrasal Verbs</h2>
+    <div class="word-bank" id="bank-t2">
+        <div class="word-item" onclick="selectWord(this)">set off</div>
+        <div class="word-item" onclick="selectWord(this)">picks up</div>
+        <div class="word-item" onclick="selectWord(this)">go away</div>
+        <div class="word-item" onclick="selectWord(this)">looking around</div>
+        <div class="word-item" onclick="selectWord(this)">get in</div>
+        <div class="word-item" onclick="selectWord(this)">get back</div>
+        <div class="word-item" onclick="selectWord(this)">takes off</div>
+        <div class="word-item" onclick="selectWord(this)">check in</div>
+    </div>
+
+    <div class="dialogue-box">
+        1. What time do you <span class="drop-zone" data-ans="set off" onclick="placeWord(this)"></span> for school? <br>
+        2. Who normally <span class="drop-zone" data-ans="picks up" onclick="placeWord(this)"></span> you from school? <br>
+        3. Do you usually <span class="drop-zone" data-ans="go away" onclick="placeWord(this)"></span> in the holidays? <br>
+        4. Do you like <span class="drop-zone" data-ans="looking around" onclick="placeWord(this)"></span> old places? <br>
+        5. What time do you <span class="drop-zone" data-ans="get in" onclick="placeWord(this)"></span> from school? <br>
+        6. When did you <span class="drop-zone" data-ans="get back" onclick="placeWord(this)"></span> from holiday? <br>
+        7. How do you feel when your flight <span class="drop-zone" data-ans="takes off" onclick="placeWord(this)"></span>? <br>
+        8. What do you do when you <span class="drop-zone" data-ans="check in" onclick="placeWord(this)"></span> to a hotel?
+    </div>
+
+    <button class="btn-submit" onclick="gradeGame()">I'm Finished! ✨</button>
+</div>
+
+<div id="cat-final">
+    <svg class="cat-img" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="#ffe4e6"/>
+        <path d="M30 40 Q35 30 40 40" stroke="#db2777" fill="none" stroke-width="3"/>
+        <path d="M60 40 Q65 30 70 40" stroke="#db2777" fill="none" stroke-width="3"/>
+        <circle cx="40" cy="50" r="3" fill="#db2777"/>
+        <circle cx="60" cy="50" r="3" fill="#db2777"/>
+        <path d="M45 60 Q50 65 55 60" stroke="#db2777" fill="none" stroke-width="2"/>
+        <path d="M20 20 L35 35 M80 20 L65 35" stroke="#ffe4e6" stroke-width="10" stroke-linecap="round"/>
+    </svg>
+    <div class="star-msg">You are a star! ⭐</div>
+    <p id="final-score" style="font-weight: bold; font-size: 1.2rem;"></p>
+    <button class="btn-submit pdf-btn" onclick="generatePDF()">Download Report 📑</button>
+</div>
+
+<script>
+    let selectedWordEl = null;
+
+    function selectWord(el) {
+        if (selectedWordEl) selectedWordEl.classList.remove('selected');
+        selectedWordEl = el;
+        el.classList.add('selected');
+    }
+
+    function placeWord(zone) {
+        if (!selectedWordEl) {
+            if (zone.innerText !== "") {
+                const wordText = zone.innerText;
+                const banks = document.querySelectorAll('.word-item');
+                for (let w of banks) {
+                    if (w.innerText === wordText && w.classList.contains('used')) {
+                        w.classList.remove('used');
+                        break;
+                    }
+                }
+                zone.innerText = "";
+                zone.classList.remove('filled');
+            }
+            return;
+        }
+
+        if (zone.innerText !== "") {
+            const oldWord = zone.innerText;
+            const banks = document.querySelectorAll('.word-item');
+            for (let w of banks) {
+                if (w.innerText === oldWord && w.classList.contains('used')) {
+                    w.classList.remove('used');
+                    break;
+                }
+            }
+        }
+
+        zone.innerText = selectedWordEl.innerText;
+        zone.classList.add('filled');
+        selectedWordEl.classList.add('used');
+        selectedWordEl.classList.remove('selected');
+        selectedWordEl = null;
+    }
+
+    function gradeGame() {
+        const name = document.getElementById('student-name').value;
+        if (!name) return alert("Please type your name first! 💖");
+
+        let score = 0;
+        const zones = document.querySelectorAll('.drop-zone');
+        zones.forEach(z => {
+            if (z.innerText.trim() === z.dataset.ans) score++;
+        });
+
+        document.getElementById('test-main').style.display = 'none';
+        document.getElementById('cat-final').style.display = 'block';
+        document.getElementById('final-score').innerText = `Your Score: ${score} / ${zones.length}`;
+        window.scrollTo(0,0);
+    }
+
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const name = document.getElementById('student-name').value;
+        const score = document.getElementById('final-score').innerText;
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(219, 39, 119);
+        doc.text("Sweet Grammar Report", 20, 20);
+        
+        doc.setFontSize(12);
+        doc.setTextColor(50, 50, 50);
+        doc.text(`Student: ${name}`, 20, 35);
+        doc.text(score, 20, 43);
+        doc.line(20, 48, 190, 48);
+
+        let y = 60;
+        document.querySelectorAll('.drop-zone').forEach((z, i) => {
+            const isCorrect = z.innerText.trim() === z.dataset.ans;
+            doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 100 : 0, 0);
+            doc.text(`${i+1}. You: ${z.innerText || "___"} | Correct: ${z.dataset.ans}`, 20, y);
+            y += 10;
+        });
+
+        doc.save(`${name}_Star_Report.pdf`);
+    }
+</script>
+
+</body>
+</html>
