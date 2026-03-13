@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping & Money Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-pink: #ffe4e6;
+            --gold: #D4AF37;
+            --accent: #db2777;
+            --bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container {
+            background: white;
+            max-width: 800px; width: 100%;
+            padding: 30px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 3px solid var(--pastel-pink);
+            box-sizing: border-box;
+        }
+
+        h1 { color: var(--accent); text-align: center; font-family: 'Montserrat'; text-transform: uppercase; margin-bottom: 25px; font-size: 1.6rem; }
+        h2 { background: #fef3c7; color: #92400e; padding: 10px 20px; border-radius: 12px; font-size: 1.1rem; margin-top: 30px; display: inline-block; }
+
+        .word-bank {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+            margin: 20px 0; padding: 20px; background: #fffcf2;
+            border: 2px dashed var(--gold); border-radius: 20px;
+        }
+
+        .word-item {
+            background: white; border: 2px solid var(--pastel-pink);
+            padding: 8px 16px; border-radius: 12px; cursor: pointer;
+            font-weight: bold; color: var(--accent); transition: 0.2s;
+            user-select: none;
+        }
+        .word-item.selected { background: var(--accent); color: white; transform: scale(1.05); }
+        .word-item.used { opacity: 0.3; pointer-events: none; }
+
+        .drop-zone {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 130px; height: 32px; border-bottom: 2px solid var(--gold);
+            margin: 0 5px; vertical-align: middle; cursor: pointer; border-radius: 5px;
+            transition: 0.2s; font-weight: bold; color: #1e40af;
+        }
+        .drop-zone.filled { background: #fff5f5; border: 1px solid var(--pastel-pink); padding: 0 10px; }
+
+        .input-text {
+            border: none; border-bottom: 2px solid var(--pastel-pink);
+            outline: none; padding: 5px; font-family: 'Quicksand'; font-weight: bold;
+            color: #1e40af; width: 120px; text-align: center; font-size: 1rem;
+        }
+
+        .task-block { line-height: 2.8; font-size: 1rem; margin-bottom: 20px; }
+        
+        .btn-finish {
+            display: block; width: 100%; padding: 20px; background: var(--accent);
+            color: white; border: none; border-radius: 50px; font-size: 1.3rem;
+            font-weight: bold; cursor: pointer; margin-top: 40px; box-shadow: 0 6px 0 #9d174d;
+            transition: 0.2s;
+        }
+        .btn-finish:active { transform: translateY(4px); box-shadow: 0 2px 0 #9d174d; }
+
+        #final-screen { display: none; text-align: center; padding: 40px; animation: fadeIn 0.5s; }
+        .cat-photo { width: 100%; max-width: 450px; border-radius: 30px; border: 8px solid white; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .star-text { font-size: 2.8rem; color: var(--gold); font-weight: bold; margin-bottom: 20px; font-family: 'Montserrat'; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container" id="game-ui">
+    <h1>Money & Shopping Quiz 🛒</h1>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <input type="text" id="student-name" placeholder="Enter Your Name" class="input-text" style="width: 200px;">
+    </div>
+
+    <h2>1. Match words to definitions</h2>
+    <div class="word-bank">
+        <div class="word-item" onclick="selectW(this)">bank account</div>
+        <div class="word-item" onclick="selectW(this)">change</div>
+        <div class="word-item" onclick="selectW(this)">price</div>
+        <div class="word-item" onclick="selectW(this)">save up</div>
+        <div class="word-item" onclick="selectW(this)">special offer</div>
+        <div class="word-item" onclick="selectW(this)">take back</div>
+        <div class="word-item" onclick="selectW(this)">checkout</div>
+        <div class="word-item" onclick="selectW(this)">give away</div>
+    </div>
+
+    <div class="task-block">
+        1. A place to keep your money safe: <span class="drop-zone" data-ans="bank account" onclick="placeW(this)"></span><br>
+        2. Return something to the shop: <span class="drop-zone" data-ans="take back" onclick="placeW(this)"></span><br>
+        3. The amount something costs: <span class="drop-zone" data-ans="price" onclick="placeW(this)"></span><br>
+        4. When something costs less than usual: <span class="drop-zone" data-ans="special offer" onclick="placeW(this)"></span><br>
+        5. Keep money for something you want to buy: <span class="drop-zone" data-ans="save up" onclick="placeW(this)"></span><br>
+        6. The money the shop assistant returns to you: <span class="drop-zone" data-ans="change" onclick="placeW(this)"></span><br>
+        7. Where you pay for your items in a shop: <span class="drop-zone" data-ans="checkout" onclick="placeW(this)"></span><br>
+        8. Get rid of things you no longer want: <span class="drop-zone" data-ans="give away" onclick="placeW(this)"></span>
+    </div>
+
+    <h2>2. Write the correct form (pay, charge, cost)</h2>
+    <div class="task-block">
+        1. The cinema only <b>charges</b> £3 for a ticket on Sunday afternoons.<br>
+        2. Her prom dress <input type="text" class="input-text" data-ans="cost"> £100 - it was so expensive!<br>
+        3. The <input type="text" class="input-text" data-ans="pay"> is quite good for a part-time job.<br>
+        4. The <input type="text" class="input-text" data-ans="cost"> of living is getting higher and higher.<br>
+        5. My smartphone monthly <input type="text" class="input-text" data-ans="charges"> have increased this month.<br>
+        6. I lent Jenny £10 last week, but she still hasn't <input type="text" class="input-text" data-ans="paid"> me back.
+    </div>
+
+    <button class="btn-finish" onclick="checkResults()">FINISH QUEST ✨</button>
+</div>
+
+<div id="final-screen">
+    <div class="star-text">YOU ARE A STAR! ⭐</div>
+    <img src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?q=80&w=1000&auto=format&fit=crop" class="cat-photo" alt="Happy Cat">
+    <p id="score-display" style="font-size: 1.5rem; font-weight: bold; margin-top: 20px; color: var(--accent);"></p>
+    <button class="btn-finish" style="width: auto; padding: 15px 50px;" onclick="location.reload()">TRY AGAIN 🔄</button>
+</div>
+
+<script>
+    let selectedW = null;
+
+    function selectW(el) {
+        if (selectedW) selectedW.classList.remove('selected');
+        selectedW = el;
+        el.classList.add('selected');
+    }
+
+    function placeW(zone) {
+        if (!selectedW) {
+            if (zone.innerText !== "") {
+                document.querySelectorAll('.word-item').forEach(i => {
+                    if (i.innerText === zone.innerText) i.classList.remove('used');
+                });
+                zone.innerText = "";
+                zone.classList.remove('filled');
+            }
+            return;
+        }
+        zone.innerText = selectedW.innerText;
+        zone.classList.add('filled');
+        selectedW.classList.add('used');
+        selectedW.classList.remove('selected');
+        selectedW = null;
+    }
+
+    function checkResults() {
+        const name = document.getElementById('student-name').value;
+        if (!name) return alert("Please enter your name!");
+
+        let score = 0;
+        let total = 0;
+
+        // Check Task 1
+        document.querySelectorAll('.drop-zone').forEach(z => {
+            total++;
+            if (z.innerText.toLowerCase().trim() === z.dataset.ans.toLowerCase().trim()) score++;
+        });
+
+        // Check Task 2
+        document.querySelectorAll('input.input-text[data-ans]').forEach(inp => {
+            total++;
+            if (inp.value.toLowerCase().trim() === inp.dataset.ans.toLowerCase().trim()) score++;
+        });
+
+        document.getElementById('game-ui').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        document.getElementById('score-display').innerText = `${name}, you scored ${score} out of ${total}!`;
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
