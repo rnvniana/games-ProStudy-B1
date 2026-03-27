@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASTE THIS!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --chef-blue: #a5f3fc;
+            --chef-yellow: #fef08a;
+            --chef-dark-blue: #0e7490;
+            --accent-orange: #fb923c;
+            --white: rgba(255, 255, 255, 0.96);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            background-color: #fdf2d5;
+            /* Your Background Image */
+            background-image: url('https://i.ibb.co.com/zhfVvVd1/2026-03-27-141018.png'); 
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .main-container {
+            background: var(--white);
+            max-width: 800px; width: 100%;
+            padding: 30px; border-radius: 35px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            border: 6px solid var(--chef-blue);
+            box-sizing: border-box;
+        }
+
+        h1 { color: var(--chef-dark-blue); text-align: center; font-family: 'Montserrat'; font-size: clamp(2.5rem, 8vw, 4rem); margin: 0 0 20px 0; text-shadow: 3px 3px var(--chef-yellow); }
+        h2 { background: var(--chef-yellow); color: #854d0e; padding: 12px 25px; border-radius: 18px; font-size: 1.3rem; margin-top: 40px; display: inline-block; box-shadow: 3px 3px 0 var(--chef-blue); }
+
+        .word-search-container { font-family: 'Montserrat'; font-size: 1.3rem; letter-spacing: 2px; line-height: 2.8; text-align: center; background: #fff; padding: 25px; border-radius: 25px; border: 3px dashed var(--chef-blue); margin-top: 15px; }
+        .search-word { display: inline-block; padding: 0 10px; border-radius: 12px; transition: 0.3s; cursor: pointer; color: #444; }
+        .search-word.correct { background-color: #4ade80; color: white; transform: scale(1.1); box-shadow: 0 4px 10px rgba(74, 222, 128, 0.4); }
+
+        .word-bank { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: var(--chef-blue); border-radius: 25px; border: 2.5px solid var(--chef-dark-blue); }
+        .draggable-word { background: white; border: 2.5px solid var(--chef-dark-blue); padding: 10px 20px; border-radius: 14px; cursor: pointer; font-weight: bold; color: var(--chef-dark-blue); transition: 0.2s; box-shadow: 0 4px 0 var(--chef-dark-blue); }
+        .draggable-word.selected { background: var(--accent-orange); color: white; border-color: white; transform: scale(1.1); box-shadow: 0 6px 15px rgba(251, 146, 60, 0.4); }
+
+        .drop-zone { display: inline-flex; align-items: center; justify-content: center; min-width: 130px; height: 32px; border-bottom: 3px solid var(--chef-dark-blue); margin: 0 6px; vertical-align: middle; cursor: pointer; font-weight: bold; color: #0891b2; transition: 0.2s; }
+        .drop-zone.filled { background: var(--chef-yellow); color: #854d0e; border: none; border-radius: 8px; padding: 0 10px; }
+
+        .task-block { line-height: 2.8; font-size: 1.1rem; margin-top: 15px; color: #334155; }
+
+        .btn-submit { display: block; width: 100%; padding: 22px; background: var(--chef-dark-blue); color: white; border: none; border-radius: 60px; font-size: 1.7rem; font-weight: bold; cursor: pointer; margin-top: 40px; box-shadow: 0 8px 0 #155e75; transition: 0.2s; }
+        .btn-submit:active { transform: translateY(4px); box-shadow: 0 4px 0 #155e75; }
+
+        #final-screen { display: none; text-align: center; padding: 40px; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .cat-img { width: 100%; max-width: 450px; border-radius: 40px; border: 12px solid white; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .quote { font-size: 2.2rem; color: var(--chef-dark-blue); font-weight: bold; margin: 30px 0; font-style: italic; line-height: 1.2; }
+    </style>
+</head>
+<body>
+
+<div class="main-container" id="game-ui">
+    <h1>TASTE THIS! 🍋</h1>
+
+    <h2>TASK 1: Find the food adjectives</h2>
+    <div class="word-search-container" id="t1"></div>
+
+    <h2>TASK 2: Meanings Match</h2>
+    <div class="word-bank" id="bank-t2"></div>
+    <div class="task-block">
+        1. Full of juice: <span class="drop-zone" data-ans="juicy" onclick="place(this)"></span><br>
+        2. Extremely pleasant to eat: <span class="drop-zone" data-ans="delicious" onclick="place(this)"></span><br>
+        3. Produced or collected recently: <span class="drop-zone" data-ans="fresh" onclick="place(this)"></span><br>
+        4. With a taste or smell like a lemon: <span class="drop-zone" data-ans="sour" onclick="place(this)"></span><br>
+        5. A strong taste that is not sweet: <span class="drop-zone" data-ans="bitter" onclick="place(this)"></span><br>
+        6. Containing ingredients with a strong, hot flavour: <span class="drop-zone" data-ans="spicy" onclick="place(this)"></span><br>
+        7. Extremely bad to taste: <span class="drop-zone" data-ans="horrible" onclick="place(this)"></span><br>
+        8. Kept at a very low temperature: <span class="drop-zone" data-ans="frozen" onclick="place(this)"></span><br>
+        9. With a taste like sugar: <span class="drop-zone" data-ans="sweet" onclick="place(this)"></span><br>
+        10. Pleasant to taste: <span class="drop-zone" data-ans="tasty" onclick="place(this)"></span><br>
+        11. Not cooked: <span class="drop-zone" data-ans="raw" onclick="place(this)"></span><br>
+        12. Very unpleasant: <span class="drop-zone" data-ans="disgusting" onclick="place(this)"></span>
+    </div>
+
+    <h2>TASK 3: Complete the sentences</h2>
+    <div class="word-bank" style="background: var(--chef-yellow); border-color: #ca8a04;">
+        <div class="draggable-word" onclick="select(this)">delicious</div>
+        <div class="draggable-word" onclick="select(this)">disgusting</div>
+        <div class="draggable-word" onclick="select(this)">horrible</div>
+        <div class="draggable-word" onclick="select(this)">tasty</div>
+    </div>
+    <div class="task-block">
+        1. Mmm, this chocolate cake is the best I’ve ever tasted! It’s <span class="drop-zone" data-ans="delicious" onclick="place(this)"></span>!<br>
+        2. I don’t enjoy eating chicken nuggets. They’re really unhealthy and <span class="drop-zone" data-ans="horrible" onclick="place(this)"></span>.<br>
+        3. How can anyone eat insects? Ugh, they’re <span class="drop-zone" data-ans="disgusting" onclick="place(this)"></span>!<br>
+        4. I like eating lasagne. It’s nice and <span class="drop-zone" data-ans="tasty" onclick="place(this)"></span>.
+    </div>
+
+    <button class="btn-submit" onclick="finish()">CHECK MY ANSWERS 👨‍🍳</button>
+</div>
+
+<div id="final-screen">
+    <div class="quote">"You are amazing! The kitchen is proud of you!"</div>
+    <img src="https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&w=600" class="cat-img" alt="Happy Cat">
+    <div id="score" style="font-size: 1.8rem; font-weight: bold; margin-top: 25px; color: var(--chef-dark-blue);"></div>
+    <button class="btn-submit" style="width: auto; padding: 18px 60px;" onclick="location.reload()">PLAY AGAIN 🔄</button>
+</div>
+
+<script>
+    const adj = ["juicy", "sour", "delicious", "raw", "disgusting", "spicy", "bitter", "horrible", "sweet", "frozen", "tasty", "fresh"];
+    const line = ["lion", "juicy", "sour", "happy", "delicious", "raw", "never", "disgusting", "spicy", "bitter", "april", "horrible", "sweet", "frozen", "car", "tasty", "fresh"];
+    
+    let sel = null;
+    let t1Found = 0;
+
+    const t1c = document.getElementById('t1');
+    line.forEach(w => {
+        const s = document.createElement('span');
+        s.className = 'search-word';
+        s.innerText = w;
+        s.onclick = () => { if(adj.includes(w) && !s.classList.contains('correct')) { s.classList.add('correct'); t1Found++; } };
+        t1c.appendChild(s);
+    });
+
+    const b2 = document.getElementById('bank-t2');
+    adj.forEach(w => {
+        const d = document.createElement('div');
+        d.className = 'draggable-word';
+        d.innerText = w;
+        d.onclick = () => select(d);
+        b2.appendChild(d);
+    });
+
+    function select(el) { if(sel) sel.classList.remove('selected'); sel = el; el.classList.add('selected'); }
+    function place(z) { if(!sel) return; z.innerText = sel.innerText; z.classList.add('filled'); sel.classList.remove('selected'); sel = null; }
+
+    function finish() {
+        let score = t1Found;
+        document.querySelectorAll('.drop-zone').forEach(z => { if(z.innerText.trim().toLowerCase() === z.dataset.ans) score++; });
+        document.getElementById('game-ui').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        document.getElementById('score').innerText = `TOTAL SCORE: ${score} / 28`;
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>
