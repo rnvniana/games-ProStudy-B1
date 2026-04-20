@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Simple vs Present Perfect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lavender: #f3e8ff;
+            --mint: #ecfdf5;
+            --rose: #fdf2f8;
+            --text-color: #4b5563;
+            --accent: #a855f7;
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, var(--lavender), var(--mint));
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            max-width: 850px; width: 100%;
+            padding: 40px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 2px solid white;
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 30px; font-size: 2rem; }
+
+        .question-item {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        .question-item:hover { background: white; }
+
+        select {
+            appearance: none;
+            background: var(--rose);
+            border: 2px solid #fbcfe8;
+            border-radius: 10px;
+            padding: 5px 15px;
+            font-family: 'Comfortaa', cursive;
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            margin: 0 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        select:hover { background: #fce7f3; }
+        select.correct { border-color: #34d399; background: #d1fae5; color: #065f46; }
+        select.wrong { border-color: #f87171; background: #fee2e2; color: #991b1b; }
+
+        .btn-check {
+            display: block; width: 100%; padding: 20px;
+            background: var(--accent); color: white;
+            border: none; border-radius: 50px;
+            font-size: 1.4rem; font-weight: bold; cursor: pointer;
+            margin-top: 30px; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-check:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4); }
+
+        #final-screen { display: none; text-align: center; animation: fadeIn 0.8s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .cat-img { width: 100%; max-width: 500px; border-radius: 25px; border: 8px solid white; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-ui">
+    <h1>Grammar Challenge ✨</h1>
+    <p style="text-align: center; margin-bottom: 20px;">Choose the correct form: <b>Past Simple</b> or <b>Present Perfect</b></p>
+
+    <div id="quiz-list">
+        </div>
+
+    <button class="btn-check" onclick="checkGrammar()">Show My Result 🌈</button>
+</div>
+
+<div id="final-screen">
+    <h1 id="result-text">Well Done!</h1>
+    <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="cat-img" alt="Happy Cat">
+    <p style="font-size: 1.5rem; margin-top: 20px;" id="score-val"></p>
+    <button class="btn-check" style="width: auto; padding: 15px 50px;" onclick="location.reload()">Try Again 🔄</button>
+</div>
+
+<script>
+    const questions = [
+        { q: "Last night I {lost|'ve lost} (lose) my keys – I had to call my flatmate to let me in.", a: "lost" },
+        { q: "I {lost|'ve lost} (lose) my keys – can you help me look for them?", a: "'ve lost" },
+        { q: "I {visited|'ve visited} (visit) Paris three times.", a: "'ve visited" },
+        { q: "Last year I {visited|'ve visited} (visit) Paris.", a: "visited" },
+        { q: "I {knew|'ve known} (know) my great grandmother for a few years - she died when I was eight.", a: "knew" },
+        { q: "I {knew|'ve known} (know) Julie for three years – we still meet once a month.", a: "'ve known" },
+        { q: "I {played|'ve played} (play) hockey since I was a child – I'm pretty good!", a: "'ve played" },
+        { q: "She {played|'ve played} hockey at school, but she {didn't like|'s not liked} (not / like) it.", a: ["played", "didn't like"] },
+        { q: "Sorry, I {missed|'ve missed} (miss) the bus, so I'm going to be late.", a: "'ve missed" },
+        { q: "I {missed|'ve missed} (miss) the bus, and then I {missed|'ve missed} (miss) the aeroplane as well!", a: ["missed", "missed"] },
+        { q: "I {worked|'ve worked} (work) at that company for five years, but I left last year.", a: "worked" },
+        { q: "I {worked|'ve worked} (work) at this company since 2018 and I really like it.", a: "'ve worked" },
+        { q: "We {finished|'ve finished} (finish) this room last week.", a: "finished" },
+        { q: "I {finished|'ve finished} (finish) my exams finally – I'm so happy!", a: "'ve finished" },
+        { q: "Yesterday, I {saw|'ve seen} (see) all my friends. It was great.", a: "saw" },
+        { q: "I {saw|'ve seen} (see) Julie three times this week!", a: "'ve seen" },
+        { q: "She {lived|'s lived} (live) in London since 1994.", a: "'s lived" },
+        { q: "She {lived|'s lived} (live) in London when she was a child.", a: "lived" },
+        { q: "I {drank|'ve drunk} (drink) three cups of coffee this morning.", a: "'ve drunk" },
+        { q: "I {drank|'ve drunk} (drink) seven cups of coffee yesterday.", a: "drank" }
+    ];
+
+    const quizList = document.getElementById('quiz-list');
+
+    questions.forEach((item, index) => {
+        let text = item.q;
+        const div = document.createElement('div');
+        div.className = 'question-item';
+        
+        // Replace {opt1|opt2} with <select>
+        let counter = 0;
+        const processedText = text.replace(/{([^}]+)}/g, (match, options) => {
+            const opts = options.split('|');
+            let correctVal = Array.isArray(item.a) ? item.a[counter] : item.a;
+            counter++;
+            return `<select data-ans="${correctVal}">
+                        <option value="">???</option>
+                        <option value="${opts[0]}">${opts[0]}</option>
+                        <option value="${opts[1]}">${opts[1]}</option>
+                    </select>`;
+        });
+
+        div.innerHTML = `${index + 1}. ${processedText}`;
+        quizList.appendChild(div);
+    });
+
+    function checkGrammar() {
+        let score = 0;
+        let total = 0;
+        const selects = document.querySelectorAll('select');
+
+        selects.forEach(s => {
+            total++;
+            if (s.value === s.dataset.ans) {
+                score++;
+                s.className = 'correct';
+            } else {
+                s.className = 'wrong';
+            }
+        });
+
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        document.getElementById('score-val').innerText = `You got ${score} out of ${total} correct!`;
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
