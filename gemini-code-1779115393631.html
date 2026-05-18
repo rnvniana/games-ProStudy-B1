@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Kingdom Grammar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-mint: #e8f5e9;
+            --pastel-sand: #fdf6e2;
+            --pastel-lavender: #f3e8ff;
+            --pastel-rose: #fce7f3;
+            --text-dark: #4a5568;
+            --accent-green: #2e7d32;
+            --accent-purple: #7c3aed;
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-lavender));
+            color: var(--text-dark);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            max-width: 800px; width: 100%;
+            padding: 40px; border-radius: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+            border: 2px solid white;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--accent-purple);
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            background: var(--pastel-sand);
+            color: #7c2d12;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            margin-top: 35px;
+            display: inline-block;
+            border: 1px solid #ffedd5;
+        }
+
+        .task-box {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 25px; border-radius: 20px;
+            margin: 15px 0; border: 1px solid rgba(0,0,0,0.05);
+            line-height: 2.2;
+            font-size: 1.05rem;
+        }
+
+        input[type="text"] {
+            border: none; border-bottom: 2px solid #cbd5e1;
+            background: transparent; outline: none;
+            padding: 2px 5px; font-family: 'Comfortaa', cursive;
+            font-weight: bold; color: var(--text-dark);
+            font-size: 1.05rem; transition: 0.3s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus { border-bottom-color: var(--accent-purple); background: rgba(124, 58, 237, 0.05); }
+
+        .btn-submit {
+            display: block; width: 100%; padding: 20px;
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.4rem; font-weight: bold; cursor: pointer;
+            margin-top: 40px; box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+            transition: 0.3s; font-family: 'Comfortaa', cursive;
+        }
+
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+
+        #final-screen { display: none; text-align: center; padding: 40px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .cat-img { width: 100%; max-width: 450px; border-radius: 30px; border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .congrats { font-size: 1.8rem; color: var(--accent-purple); font-weight: bold; margin: 25px 0; }
+
+        .success-input { border-bottom-color: #34d399 !important; color: #047857 !important; }
+        .fail-input { border-bottom-color: #f87171 !important; color: #b91c1c !important; }
+    </style>
+</head>
+<body>
+
+<div class="main-card" id="quiz-card">
+    <h1>Nature & Animal World 🌸</h1>
+
+    <h2>TASK 1: Adverbs of Probability</h2>
+    <div class="task-box">
+        1. <b>✓</b> The Greenland shark is <b>definitely</b> dangerous because it’s poisonous.<br>
+        2. <b>✗</b> Basking sharks are <input type="text" style="width: 140px" data-ans="definitely not"> dangerous, despite looking scary.<br>
+        3. <b>–</b> Bees are <input type="text" style="width: 180px" data-ans="probably,perhaps,maybe"> considered dangerous because they sting.<br>
+        4. <b>–</b> The vampire bat <input type="text" style="width: 180px" data-ans="probably,perhaps,maybe"> sounds frightening, but it’s a pretty harmless animal.<br>
+        5. <b>✗</b> Frogs are <input type="text" style="width: 140px" data-ans="definitely not"> generally considered peaceful animals that are harmful.<br>
+        6. <b>✓</b> But the golden poison dart frog is <input type="text" style="width: 120px" data-ans="definitely"> one of the most dangerous animals in the world.
+    </div>
+
+    <h2>TASK 2: Compare the Animals</h2>
+    <div class="task-box">
+        1. shark / deer / definitely / safe <br>
+        → <i>A deer is definitely safer than a shark.</i><br>
+        
+        2. frog / fly / definitely / big <br>
+        → <input type="text" style="width: 95%" data-ans="A frog is definitely bigger than a fly."><br>
+        
+        3. fox / wolf / probably / dangerous <br>
+        → <input type="text" style="width: 95%" data-ans="A wolf is probably more dangerous than a fox."><br>
+        
+        4. mosquito / butterfly / perhaps / pretty <br>
+        → <input type="text" style="width: 95%" data-ans="A butterfly is perhaps prettier than a mosquito."><br>
+        
+        5. worm / donkey / definitely not / smaller <br>
+        → <input type="text" style="width: 95%" data-ans="A donkey is definitely not smaller than a worm.">
+    </div>
+
+    <button class="btn-submit" onclick="checkAnswers()">Check Answers ✨</button>
+</div>
+
+<div id="final-screen">
+    <div class="congrats">Wonderful Job! 💫</div>
+    <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=600" class="cat-img" alt="Cute Pastel Cat">
+    <div id="score-text" style="font-size: 1.3rem; margin: 20px 0; color: var(--text-dark); font-weight: bold;"></div>
+    <button class="btn-submit" style="width: auto; padding: 15px 50px;" onclick="location.reload()">Play Again 🔄</button>
+</div>
+
+<script>
+    function checkAnswers() {
+        let score = 0;
+        const inputs = document.querySelectorAll('input[data-ans]');
+
+        inputs.forEach(input => {
+            // Normalize spaces, remove dots at the end for checking sentences, and handle internal typos
+            let userVal = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            if(userVal.endsWith('.')) userVal = userVal.slice(0, -1).trim();
+
+            const correctOptions = input.dataset.ans.toLowerCase().split(',');
+            let isCorrect = false;
+
+            correctOptions.forEach(opt => {
+                let cleanOpt = opt.trim();
+                if(cleanOpt.endsWith('.')) cleanOpt = cleanOpt.slice(0, -1).trim();
+                if(userVal === cleanOpt) {
+                    isCorrect = true;
+                }
+            });
+
+            if (isCorrect) {
+                score++;
+                input.className = 'success-input';
+            } else {
+                input.className = 'fail-input';
+            }
+        });
+
+        setTimeout(() => {
+            document.getElementById('quiz-card').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+            document.getElementById('score-text').innerText = `You completed ${score} out of ${inputs.length} tasks correctly!`;
+            window.scrollTo(0,0);
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
