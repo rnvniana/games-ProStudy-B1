@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REVIEW 3 VOCAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-pink: #fff1f2;
+            --pastel-lavender: #faf5ff;
+            --pastel-blue: #f0fdfa;
+            --pastel-mint: #f0fdf4;
+            --text-main: #4b5563;
+            --accent-purple: #c084fc;
+            --accent-blue: #2dd4bf;
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, #fdf2f8, #f3e8ff, #ecfeff);
+            color: var(--text-main);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            max-width: 850px; width: 100%;
+            padding: 40px; border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            border: 2px solid white;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #a855f7;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #fae8ff;
+        }
+
+        h2 {
+            background: #fae8ff;
+            color: #701a75;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            margin-top: 35px;
+            display: inline-block;
+        }
+
+        /* Task 1 Sorting Styles */
+        .word-pool {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center; padding: 20px;
+            background: white; border-radius: 20px;
+            border: 2px dashed #e9d5ff; margin: 15px 0;
+        }
+
+        .word-item {
+            background: var(--pastel-lavender);
+            border: 2px solid #e9d5ff;
+            padding: 8px 16px; border-radius: 12px;
+            cursor: pointer; font-weight: bold;
+            transition: 0.2s; color: #6b21a8;
+        }
+
+        .word-item.selected {
+            background: #a855f7; color: white; border-color: #a855f7;
+            transform: scale(1.05);
+        }
+
+        .topics-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px; margin-top: 20px;
+        }
+
+        .topic-bucket {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid #e2e8f0; border-radius: 20px;
+            padding: 15px; min-height: 120px;
+            transition: 0.3s; text-align: center;
+        }
+
+        .topic-bucket h3 { margin: 0 0 10px 0; font-size: 1rem; color: #334155; }
+        
+        .bucket-content {
+            display: flex; flex-direction: column; gap: 5px; align-items: center;
+        }
+
+        .sorted-word {
+            background: #f1f5f9; padding: 5px 12px;
+            border-radius: 8px; font-size: 0.9rem;
+            font-weight: bold; width: 80%; text-align: center;
+            cursor: pointer; animation: pop 0.3s ease;
+        }
+        @keyframes pop { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+        /* Task 2 Select Styles */
+        .sentence-block { line-height: 2.5; font-size: 1.05rem; }
+        
+        select {
+            appearance: none; background: #f0fdfa;
+            border: 2px solid #ccfbf1; border-radius: 10px;
+            padding: 4px 12px; font-family: 'Comfortaa', cursive;
+            font-weight: bold; color: #0d9488; cursor: pointer;
+            outline: none; transition: 0.2s; margin: 0 5px;
+        }
+        select:hover { background: #e6fffa; }
+        select.correct { border-color: #34d399; background: #d1fae5; color: #065f46; }
+        select.wrong { border-color: #f87171; background: #fee2e2; color: #991b1b; }
+
+        .btn-submit {
+            display: block; width: 100%; padding: 20px;
+            background: linear-gradient(135deg, #c084fc, #a855f7);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.4rem; font-weight: bold; cursor: pointer;
+            margin-top: 40px; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.2);
+            transition: 0.3s; font-family: 'Comfortaa', cursive;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3); }
+
+        /* Final Screen */
+        #final-screen { display: none; text-align: center; padding: 40px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .cat-img { width: 100%; max-width: 450px; border-radius: 30px; border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        .congrats { font-size: 2rem; color: #a855f7; font-weight: bold; margin: 25px 0; }
+    </style>
+</head>
+<body>
+
+<div class="game-card" id="main-ui">
+    <h1>REVIEW 3 VOCAB ✨</h1>
+
+    <h2>TASK 1: Category Sort</h2>
+    <p style="font-size: 0.9rem; margin: 5px 0 15px 0; color: #6b7280;">Click a word, then click the correct topic block to sort it!</p>
+    
+    <div class="word-pool" id="pool-t1"></div>
+
+    <div class="topics-grid">
+        <div class="topic-bucket" onclick="dropWord('food')" style="background-color: var(--pastel-pink)">
+            <h3>Food & Taste 🍓</h3>
+            <div class="bucket-content" id="bucket-food"></div>
+        </div>
+        <div class="topic-bucket" onclick="dropWord('body')" style="background-color: var(--pastel-lavender)">
+            <h3>The Body 🖐️</h3>
+            <div class="bucket-content" id="bucket-body"></div>
+        </div>
+        <div class="topic-bucket" onclick="dropWord('health')" style="background-color: var(--pastel-blue)">
+            <h3>Health 🤒</h3>
+            <div class="bucket-content" id="bucket-health"></div>
+        </div>
+        <div class="topic-bucket" onclick="dropWord('animals')" style="background-color: var(--pastel-mint)">
+            <h3>Animals 🦊</h3>
+            <div class="bucket-content" id="bucket-animals"></div>
+        </div>
+    </div>
+
+    <h2>TASK 2: Complete Sentences</h2>
+    <div class="sentence-block" style="margin-top: 15px;">
+        1. I’ve had a <select data-ans="cough" id="s1"><option value="">???</option></select> for over a week. It’s really making my throat sore.<br>
+        2. This chocolate isn’t very nice. It’s too <select data-ans="bitter" id="s2"><option value="">???</option></select>.<br>
+        3. Unlike most other birds, female <select data-ans="eagles" id="s3"><option value="">???</option></select> are larger than the males.<br>
+        4. Can you feel my <select data-ans="forehead" id="s4"><option value="">???</option></select>? I think I’ve got a temperature.<br>
+        5. <select data-ans="mosquitoes" id="s5"><option value="">???</option></select> are the most dangerous insects in the world.<br>
+        6. I don't buy fruit here. It isn’t <select data-ans="fresh" id="s6"><option value="">???</option></select> enough.<br>
+        7. You haven't got a cold. You’ve caught <select data-ans="flu" id="s7"><option value="">???</option></select>.<br>
+        8. I was carrying a heavy bag today and now my <select data-ans="shoulder" id="s8"><option value="">???</option></select> really hurts.
+    </div>
+
+    <button class="btn-submit" onclick="evaluateGame()">Check Answers 🌈</button>
+</div>
+
+<div id="final-screen">
+    <div class="congrats">Magical Score! 🌸</div>
+    <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=600" class="cat-img" alt="Fluffy Pastel Cat">
+    <div id="final-score" style="font-size: 1.4rem; margin-top: 20px; font-weight: bold; color: var(--text-main);"></div>
+    <button class="btn-submit" style="width: auto; padding: 15px 50px;" onclick="location.reload()">Play Again 🔄</button>
+</div>
+
+<script>
+    const wordsData = {
+        toe: "body", chin: "body", shoulder: "body", forehead: "body",
+        bitter: "food", raw: "food", fresh: "food", sour: "food",
+        flu: "health", cut: "health", cough: "health", "stomach ache": "health",
+        deer: "animals", mosquitoes: "animals", eagles: "animals", wolves: "animals"
+    };
+
+    let selectedWord = null;
+    let selectedElement = null;
+
+    // Initialize Task 1 Pool
+    const pool = document.getElementById('pool-t1');
+    Object.keys(wordsData).sort(() => Math.random() - 0.5).forEach(w => {
+        const item = document.createElement('div');
+        item.className = 'word-item';
+        item.innerText = w;
+        item.onclick = (e) => {
+            e.stopPropagation();
+            if(selectedElement) selectedElement.classList.remove('selected');
+            selectedWord = w;
+            selectedElement = item;
+            item.classList.add('selected');
+        };
+        pool.appendChild(item);
+    });
+
+    function dropWord(topic) {
+        if (!selectedWord) return;
+        
+        const bucket = document.getElementById(`bucket-${topic}`);
+        const div = document.createElement('div');
+        div.className = 'sorted-word';
+        div.innerText = selectedWord;
+        div.setAttribute('data-word', selectedWord);
+        div.setAttribute('data-bucket', topic);
+        
+        // Return back to pool if clicked in bucket
+        div.onclick = (e) => {
+            e.stopPropagation();
+            const originalWord = div.getAttribute('data-word');
+            const item = document.createElement('div');
+            item.className = 'word-item';
+            item.innerText = originalWord;
+            item.onclick = (ev) => {
+                ev.stopPropagation();
+                if(selectedElement) selectedElement.classList.remove('selected');
+                selectedWord = originalWord;
+                selectedElement = item;
+                item.classList.add('selected');
+            };
+            pool.appendChild(item);
+            div.remove();
+        };
+
+        bucket.appendChild(div);
+        selectedElement.remove();
+        selectedWord = null;
+        selectedElement = null;
+    }
+
+    // Initialize Task 2 Dropdowns
+    const t2Words = Object.keys(wordsData).sort();
+    document.querySelectorAll('select').forEach(sel => {
+        t2Words.forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w;
+            // Capitalize first letter if it's for the start of sentence 5
+            opt.innerText = (sel.id === 's5') ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+            sel.appendChild(opt);
+        });
+    });
+
+    function evaluateGame() {
+        let score = 0;
+        
+        // Check Task 1
+        const sorted = document.querySelectorAll('.sorted-word');
+        sorted.forEach(w => {
+            const word = w.getAttribute('data-word');
+            const currentBucket = w.getAttribute('data-bucket');
+            if (wordsData[word] === currentBucket) {
+                score++;
+                w.style.backgroundColor = '#d1fae5';
+                w.style.color = '#065f46';
+            } else {
+                w.style.backgroundColor = '#fee2e2';
+                w.style.color = '#991b1b';
+            }
+        });
+
+        // Check Task 2
+        document.querySelectorAll('select').forEach(sel => {
+            if (sel.value.toLowerCase() === sel.dataset.ans.toLowerCase()) {
+                score++;
+                sel.className = 'correct';
+            } else {
+                sel.className = 'wrong';
+            }
+        });
+
+        setTimeout(() => {
+            document.getElementById('main-ui').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+            document.getElementById('final-score').innerText = `Your score: ${score} / 24`;
+            window.scrollTo(0,0);
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
