@@ -9,7 +9,6 @@
         :root {
             --pastel-mint: #f0fdf4;
             --pastel-blue: #f0f9ff;
-            --pastel-cyan: #ecfeff;
             --mint-accent: #10b981;
             --blue-accent: #0284c7;
             --text-dark: #334155;
@@ -90,25 +89,37 @@
         .correct-field { border-color: #34d399 !important; background: #d1fae5 !important; color: #065f46 !important; border-radius: 6px; }
         .wrong-field { border-color: #f87171 !important; background: #fee2e2 !important; color: #991b1b !important; border-radius: 6px; }
 
-        .btn-submit {
-            display: block; width: 100%; padding: 20px;
-            background: linear-gradient(135deg, #0ea5e9, #10b981);
+        .action-zone {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 25px;
+            border: 2px solid #bae6fd;
+            text-align: center;
+        }
+
+        .btn-main {
+            padding: 15px 35px;
             color: white; border: none; border-radius: 50px;
-            font-size: 1.4rem; font-weight: bold; cursor: pointer;
-            margin-top: 40px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            margin: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: 0.3s; font-family: 'Comfortaa', cursive;
         }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+        
+        .btn-check { background: linear-gradient(135deg, #0ea5e9, #10b981); }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+        
+        .btn-reset { background: linear-gradient(135deg, #64748b, #475569); }
+        .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(71, 85, 105, 0.2); }
 
-        #final-screen { display: none; text-align: center; padding: 40px; animation: fadeIn 0.6s ease-out; }
+        .result-panel { display: none; text-align: center; margin-top: 20px; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .cat-img { width: 100%; max-width: 450px; border-radius: 30px; border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
-        .congrats { font-size: 2rem; color: #10b981; font-weight: bold; margin: 25px 0; }
+        .cat-img { width: 100%; max-width: 320px; border-radius: 25px; border: 8px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-top: 15px; }
     </style>
 </head>
 <body>
 
-<div class="game-container" id="main-ui">
+<div class="game-container">
     <h1>GRAMMAR REVIEW 3 🌊</h1>
 
     <h2>TASK 1: Past Simple vs Present Perfect</h2>
@@ -164,14 +175,15 @@
         <select data-ans="memories"><option value="">???</option><option value="records">records</option><option value="memories">memories</option><option value="rules">rules</option><option value="minds">minds</option></select> from your childhood can actually help you to get better.
     </div>
 
-    <button class="btn-submit" onclick="checkReview()">Verify My Answers ✨</button>
-</div>
-
-<div id="final-screen">
-    <div class="congrats">Wonderful Results! 🌟</div>
-    <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=600" class="cat-img" alt="Happy Pastel Cat">
-    <div id="score-text" style="font-size: 1.4rem; margin-top: 20px; font-weight: bold;"></div>
-    <button class="btn-submit" style="width: auto; padding: 15px 50px;" onclick="location.reload()">Restart Review 🔄</button>
+    <div class="action-zone">
+        <button class="btn-main btn-check" onclick="checkReview()">Check My Answers 🌟</button>
+        <button class="btn-main btn-reset" onclick="resetReview()">Restart Game 🔄</button>
+        
+        <div class="result-panel" id="score-box">
+            <div style="font-size: 1.3rem; font-weight: bold; color: var(--mint-accent);" id="score-text"></div>
+            <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=600" class="cat-img" alt="Happy Pastel Cat">
+        </div>
+    </div>
 </div>
 
 <script>
@@ -179,7 +191,7 @@
         let score = 0;
         let total = 0;
 
-        // Verify Input fields (Task 1)
+        // Verify Inputs (Task 1)
         const inputs = document.querySelectorAll('input[type="text"]');
         inputs.forEach(input => {
             total++;
@@ -194,11 +206,10 @@
             }
         });
 
-        // Verify Select fields (Task 2, 3, 4)
+        // Verify Selects (Task 2, 3, 4)
         const selects = document.querySelectorAll('select');
         selects.forEach(sel => {
             total++;
-            // Support alternate smart punctuation check
             const userVal = sel.value.trim().toLowerCase().replace(/[’]/g, "'");
             const correctVal = sel.dataset.ans.trim().toLowerCase().replace(/[’]/g, "'");
 
@@ -210,12 +221,29 @@
             }
         });
 
-        setTimeout(() => {
-            document.getElementById('main-ui').style.display = 'none';
-            document.getElementById('final-screen').style.display = 'block';
-            document.getElementById('score-text').innerText = `You completed ${score} out of ${total} forms correctly!`;
-            window.scrollTo(0, 0);
-        }, 500);
+        // Show score and kitten at the bottom
+        const scoreBox = document.getElementById('score-box');
+        document.getElementById('score-text').innerText = `Amazing! You scored ${score} out of ${total}!`;
+        scoreBox.style.display = 'block';
+        scoreBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetReview() {
+        // Clear inputs
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.value = '';
+            input.className = '';
+        });
+
+        // Clear selects
+        document.querySelectorAll('select').forEach(sel => {
+            sel.value = '';
+            sel.className = '';
+        });
+
+        // Hide results
+        document.getElementById('score-box').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
