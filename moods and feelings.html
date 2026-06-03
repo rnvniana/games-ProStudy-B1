@@ -54,14 +54,14 @@
         }
 
         /* Grab & Put Word Bank */
-        .sticky-bank-title {
-            font-size: 0.95rem; font-weight: bold; color: #db2777; margin-bottom: 5px;
+        .bank-title {
+            font-size: 0.95rem; font-weight: bold; color: #db2777; margin-top: 15px; margin-bottom: 5px;
         }
         .word-bank {
             background: white; border: 2px dashed #f472b6;
-            padding: 20px; border-radius: 20px;
+            padding: 15px; border-radius: 20px;
             display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
-            margin: 15px 0; min-height: 50px;
+            min-height: 45px;
         }
 
         .draggable-word {
@@ -71,6 +71,7 @@
         }
         .draggable-word:hover { transform: scale(1.05); background: #fce7f3; }
         .draggable-word.selected { background: #db2777; color: white; border-color: #db2777; }
+        .draggable-word.used { opacity: 0.4; background: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; pointer-events: none; }
 
         .task-box {
             background: rgba(255, 255, 255, 0.5); padding: 25px; border-radius: 20px;
@@ -79,7 +80,7 @@
 
         /* Clickable Drop Zones */
         .drop-zone {
-            display: inline-block; min-width: 130px; height: 32px;
+            display: inline-block; min-width: 140px; height: 32px;
             border-bottom: 2px dashed #cbd5e1; margin: 0 5px;
             vertical-align: middle; text-align: center; cursor: pointer;
             transition: 0.2s; position: relative;
@@ -139,21 +140,19 @@
 
 <div class="game-wrapper">
     <h1>MOODS AND FEELINGS 🌟</h1>
-    <div class="subtitle">Grab a word below and put it into any sentence!</div>
-
-    <div style="position: sticky; top: 10px; z-index: 100; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #fbcfe8;">
-        <div class="sticky-bank-title">📦 Word Box (Click a word, then click a blank space):</div>
-        <div class="word-bank" id="global-word-bank"></div>
-    </div>
+    <div class="subtitle">Click a word from the box, then click the line to place it!</div>
 
     <h2>Task 1: Match Meanings</h2>
-    <div class="task-box">
+    <div class="bank-title">📦 Word Box for Task 1:</div>
+    <div class="word-bank" id="bank-task1"></div>
+    
+    <div class="task-box" id="box-task1">
         1. extremely surprised → <div class="drop-zone" data-ans="amazed"></div><br>
         2. feeling very pleased about something you have done → <div class="drop-zone" data-ans="proud"></div><br>
         3. showing thanks for something → <div class="drop-zone" data-ans="grateful"></div><br>
         4. not able to think clearly or to understand something → <div class="drop-zone" data-ans="confused"></div><br>
         5. thinking something positive will happen → <div class="drop-zone" data-ans="hopeful"></div><br>
-        6. unhappy because someone or something was not as good as you hoped → <div class="drop-zone" style="min-width:150px;" data-ans="disappointed"></div><br>
+        6. unhappy because someone or something was not as good as you hoped → <div class="drop-zone" style="min-width:160px;" data-ans="disappointed"></div><br>
         7. very tired → <div class="drop-zone" data-ans="exhausted"></div><br>
         8. not frightened in dangerous or difficult situations → <div class="drop-zone" data-ans="brave"></div><br>
         9. feeling happy because nothing is worrying you → <div class="drop-zone" data-ans="relaxed"></div><br>
@@ -163,14 +162,17 @@
     </div>
 
     <h2>Task 2: Complete Sentences</h2>
-    <div class="task-box">
+    <div class="bank-title">📦 Word Box for Task 2 (There is one extra word!):</div>
+    <div class="word-bank" id="bank-task2"></div>
+
+    <div class="task-box" id="box-task2">
         1. Danny is <div class="drop-zone" data-ans="scared"></div> that he won’t pass the exam – he hasn’t studied very hard.<br>
         2. I don’t understand what you’re saying – I’m <div class="drop-zone" data-ans="confused"></div>.<br>
-        3. Alison didn’t get what she wanted for her birthday. She’s a bit <div class="drop-zone" style="min-width:150px;" data-ans="disappointed"></div>.<br>
+        3. Alison didn’t get what she wanted for her birthday. She’s a bit <div class="drop-zone" style="min-width:160px;" data-ans="disappointed"></div>.<br>
         4. Jack does yoga because it makes him feel <div class="drop-zone" data-ans="relaxed"></div>.<br>
         5. I’m so <div class="drop-zone" data-ans="proud"></div> of our school – we won the competition.<br>
         6. I don't know how I got 100% in my maths exam. I’m <div class="drop-zone" data-ans="amazed"></div>!<br>
-        7. Pedro felt <div class="drop-zone" style="min-width:150px;" data-ans="embarrassed"></div> when he had to speak in front of the whole class.<br>
+        7. Pedro felt <div class="drop-zone" style="min-width:160px;" data-ans="embarrassed"></div> when he had to speak in front of the whole class.<br>
         8. Eva is <div class="drop-zone" data-ans="hopeful"></div> that she will win the swimming race.<br>
         9. I’ve been running for half an hour and now I feel completely <div class="drop-zone" data-ans="exhausted"></div>!<br>
         10. Carol is feeling <div class="drop-zone" data-ans="stressed"></div> because she has a test tomorrow and she’s working hard.
@@ -229,14 +231,16 @@
     const baseWords = ["amazed", "brave", "confused", "disappointed", "embarrassed", "exhausted", "grateful", "hopeful", "proud", "relaxed", "scared", "stressed"];
     let selectedWordElement = null;
 
-    // Build Word Bank (Words can be reused multiple times)
-    function initWordBank() {
-        const bank = document.getElementById('global-word-bank');
+    // Build specific Word Banks
+    function createBank(bankId, taskId) {
+        const bank = document.getElementById(bankId);
         bank.innerHTML = '';
-        baseWords.sort().forEach(word => {
+        // Sorting alphabetically for neat look
+        [...baseWords].sort().forEach((word, idx) => {
             const btn = document.createElement('div');
             btn.className = 'draggable-word';
             btn.innerText = word;
+            btn.id = `word-${taskId}-${idx}`;
             btn.onclick = (e) => {
                 e.stopPropagation();
                 if (selectedWordElement) {
@@ -249,29 +253,34 @@
         });
     }
 
-    // Set up Drop Zones
-    document.querySelectorAll('.drop-zone').forEach(zone => {
-        zone.onclick = (e) => {
-            e.stopPropagation();
-            
-            // If clicking a zone that already has a word, return it / remove it
-            if (zone.querySelector('.placed-word')) {
-                zone.innerHTML = '';
-                zone.className = 'drop-zone';
-                return;
-            }
+    // Connect Drop Zones to their specific tasks
+    function setupDropZones(containerId, taskId) {
+        document.querySelectorAll(`#${containerId} .drop-zone`).forEach(zone => {
+            zone.onclick = (e) => {
+                e.stopPropagation();
+                
+                const currentWord = zone.querySelector('.placed-word');
+                if (currentWord) {
+                    const sourceId = currentWord.dataset.sourceId;
+                    const originalWordBtn = document.getElementById(sourceId);
+                    if (originalWordBtn) {
+                        originalWordBtn.classList.remove('used');
+                    }
+                    zone.innerHTML = '';
+                    zone.className = 'drop-zone';
+                    return;
+                }
 
-            // If a word from bank is selected, place it here
-            if (selectedWordElement) {
-                const wordText = selectedWordElement.innerText;
-                
-                zone.innerHTML = `<span class="placed-word">${wordText}</span>`;
-                
-                selectedWordElement.classList.remove('selected');
-                selectedWordElement = null;
-            }
-        };
-    });
+                if (selectedWordElement && selectedWordElement.id.includes(taskId)) {
+                    const wordText = selectedWordElement.innerText;
+                    zone.innerHTML = `<span class="placed-word" data-source-id="${selectedWordElement.id}">${wordText}</span>`;
+                    selectedWordElement.classList.add('used');
+                    selectedWordElement.classList.remove('selected');
+                    selectedWordElement = null;
+                }
+            };
+        });
+    }
 
     function checkGame() {
         let score = 0;
@@ -337,16 +346,22 @@
         document.querySelectorAll('.checkbox-label').forEach(label => label.className = 'checkbox-label');
 
         // Reset Selection state
-        if (selectedWordElement) selectedWordElement.classList.remove('selected');
         selectedWordElement = null;
+
+        // Re-initialize Separate Banks to un-gray words
+        createBank('bank-task1', 't1');
+        createBank('bank-task2', 't2');
 
         // Hide results
         document.getElementById('result-box').style.display = 'none';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Run on launch
-    initWordBank();
+    // Launch Game System
+    createBank('bank-task1', 't1');
+    createBank('bank-task2', 't2');
+    setupDropZones('box-task1', 't1');
+    setupDropZones('box-task2', 't2');
 </script>
 
 </body>
