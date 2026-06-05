@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Grammar Pop!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --neon-yellow: #eab308;
+            --neon-cyan: #06b6d4;
+            --neon-lime: #22c55e;
+            --neon-pink: #f43f5e;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Unbounded', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0; padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            max-width: 900px; width: 100%;
+            padding: 45px; border-radius: 24px;
+            border: 4px solid var(--text-light);
+            box-shadow: 12px 12px 0px var(--neon-cyan);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-weight: 900; text-transform: uppercase; text-align: center;
+            font-size: 2.8rem; margin: 0 0 10px 0; color: var(--neon-yellow);
+            letter-spacing: -1px; transform: rotate(-1deg);
+            text-shadow: 4px 4px 0px #000;
+        }
+
+        .desc {
+            text-align: center; font-size: 1rem; text-transform: uppercase;
+            color: var(--neon-cyan); margin-bottom: 40px; font-weight: 700;
+        }
+
+        h2 {
+            font-weight: 900; text-transform: uppercase; font-size: 1.3rem;
+            background: var(--neon-cyan); color: #000; display: inline-block;
+            padding: 6px 16px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;
+            margin-top: 40px; margin-bottom: 25px; transform: rotate(0.5deg);
+        }
+
+        .word-box-title {
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase;
+            color: var(--neon-yellow); margin-bottom: 8px;
+        }
+
+        /* Task 2 Grab & Put Box */
+        .neon-word-bank {
+            background: #0f172a; border: 3px dashed var(--neon-yellow);
+            padding: 20px; border-radius: 16px; display: flex; flex-wrap: wrap;
+            gap: 12px; justify-content: center; margin-bottom: 25px;
+        }
+
+        .neon-word {
+            background: var(--neon-yellow); color: #000; font-weight: 900;
+            text-transform: uppercase; padding: 8px 16px; border: 3px solid #000;
+            border-radius: 8px; cursor: pointer; transition: 0.15s; user-select: none;
+            box-shadow: 3px 3px 0px #000; font-size: 0.9rem;
+        }
+        .neon-word:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0px #000; }
+        .neon-word.selected { background: var(--neon-cyan); transform: translate(1px, 1px); box-shadow: 1px 1px 0px #000; }
+        .neon-word.used { opacity: 0.25; background: #475569; color: #94a3b8; border-color: #475569; box-shadow: none; pointer-events: none; }
+
+        /* Task Boxes */
+        .exercise-block {
+            background: #111827; border: 3px solid #000; border-radius: 16px;
+            padding: 30px; line-height: 2.8; font-size: 1rem; font-weight: 700;
+            box-shadow: inset 0px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .sentence-item { margin-bottom: 15px; }
+        .num-badge { color: var(--neon-yellow); margin-right: 5px; font-weight: 900; }
+
+        /* Custom Dropdowns (Task 1) */
+        select {
+            background: #1e293b; color: var(--neon-cyan); font-family: 'Unbounded', sans-serif;
+            font-weight: 700; border: 2px solid var(--text-light); padding: 4px 10px;
+            border-radius: 8px; outline: none; cursor: pointer; transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        select:focus { border-color: var(--neon-yellow); background: #000; }
+
+        /* Grab & Put Zones (Task 2) */
+        .neon-drop-zone {
+            display: inline-block; min-width: 165px; height: 38px;
+            border-bottom: 3px dashed var(--neon-cyan); margin: 0 5px;
+            vertical-align: middle; text-align: center; cursor: pointer;
+            transition: 0.2s; position: relative;
+        }
+        .neon-drop-zone:hover { background: rgba(6, 182, 212, 0.1); }
+        
+        .neon-drop-zone .placed-text {
+            background: var(--neon-yellow); color: #000; font-weight: 900;
+            text-transform: uppercase; padding: 2px 10px; border: 2px solid #000;
+            border-radius: 6px; box-shadow: 2px 2px 0px #000; display: inline-block;
+            font-size: 0.85rem; line-height: 1.6; animation: slam 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slam { from { transform: scale(1.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Checking Status Styles */
+        .correct-neon { border-color: var(--neon-lime) !important; color: #000 !important; background: var(--neon-lime) !important; box-shadow: none !important; }
+        .wrong-neon { border-color: var(--neon-pink) !important; color: #fff !important; background: var(--neon-pink) !important; box-shadow: none !important; }
+
+        .correct-zone-neon { border-bottom-color: var(--neon-lime) !important; }
+        .correct-zone-neon .placed-text { background: var(--neon-lime) !important; border-color: #000 !important; color: #000 !important; box-shadow: none !important; }
+
+        .wrong-zone-neon { border-bottom-color: var(--neon-pink) !important; }
+        .wrong-zone-neon .placed-text { background: var(--neon-pink) !important; border-color: #000 !important; color: #fff !important; box-shadow: none !important; }
+
+        /* Controls Panel */
+        .neon-controls {
+            background: #000; border: 4px solid var(--text-light); padding: 30px;
+            border-radius: 20px; text-align: center; box-shadow: 8px 8px 0px var(--neon-pink);
+        }
+
+        .btn-bold {
+            font-family: 'Unbounded', sans-serif; font-weight: 900; text-transform: uppercase;
+            font-size: 1.1rem; padding: 16px 36px; border: 3px solid #000; border-radius: 12px;
+            cursor: pointer; margin: 10px; transition: 0.15s;
+        }
+        .btn-bold-check { background: var(--neon-lime); color: #000; box-shadow: 4px 4px 0px var(--text-light); }
+        .btn-bold-check:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--text-light); }
+        .btn-bold-reset { background: #475569; color: var(--text-light); box-shadow: 4px 4px 0px #222; }
+        .btn-bold-reset:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #222; }
+        .btn-bold:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #000; }
+
+        .score-board { display: none; margin-top: 25px; animation: glitchIn 0.4s steps(4); }
+        @keyframes glitchIn { from { filter: hue-rotate(90deg); opacity: 0; } to { filter: hue-rotate(0deg); opacity: 1; } }
+        .score-text { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; color: var(--neon-yellow); margin-bottom: 15px; }
+        .cool-graphic { width: 100%; max-width: 340px; border: 4px solid #000; border-radius: 16px; box-shadow: 6px 6px 0px var(--neon-cyan); }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h1>Neon Grammar Pop! 🔥</h1>
+    <div class="desc">Master your adjectives with style</div>
+
+    <h2>Task 1: Choose the correct adjective</h2>
+    <div class="exercise-block" id="block-task1">
+        <div class="sentence-item"><span class="num-badge">01.</span> Maggie is doing her homework and she’s <select data-ans="bored"><option value="">-- select --</option><option value="bored">bored</option><option value="boring">boring</option></select>.</div>
+        <div class="sentence-item"><span class="num-badge">02.</span> I hate it when my mum asks me about school – it’s so <select data-ans="annoying"><option value="">-- select --</option><option value="annoyed">annoyed</option><option value="annoying">annoying</option></select>.</div>
+        <div class="sentence-item"><span class="num-badge">03.</span> Dad felt <select data-ans="relaxed"><option value="">-- select --</option><option value="relaxed">relaxed</option><option value="relaxing">relaxing</option></select> after playing his guitar.</div>
+        <div class="sentence-item"><span class="num-badge">04.</span> It was <select data-ans="surprising"><option value="">-- select --</option><option value="surprised">surprised</option><option value="surprising">surprising</option></select> that Anne won the game so easily.</div>
+        <div class="sentence-item"><span class="num-badge">05.</span> I’m a bit <select data-ans="confused"><option value="">-- select --</option><option value="confused">confused</option><option value="confusing">confusing</option></select> about the ending of the book – what actually happened?</div>
+        <div class="sentence-item"><span class="num-badge">06.</span> Johnny stood up in class but forgot what to say – he was <select data-ans="embarrassed"><option value="">-- select --</option><option value="embarrassed">embarrassed</option><option value="embarrassing">embarrassing</option></select>.</div>
+        <div class="sentence-item"><span class="num-badge">07.</span> We went to bed early last night because we were <select data-ans="tired"><option value="">-- select --</option><option value="tired">tired</option><option value="tiring">tiring</option></select>.</div>
+        <div class="sentence-item"><span class="num-badge">08.</span> This new video game is <select data-ans="disappointing"><option value="">-- select --</option><option value="disappointed">disappointed</option><option value="disappointing">disappointing</option></select>.</div>
+        <div class="sentence-item"><span class="num-badge">09.</span> This film is really <select data-ans="boring"><option value="">-- select --</option><option value="bored">bored</option><option value="boring">boring</option></select> – I think I’ll read a book instead.</div>
+        <div class="sentence-item"><span class="num-badge">10.</span> Were you <select data-ans="surprised"><option value="">-- select --</option><option value="surprised">surprised</option><option value="surprising">surprising</option></select> to hear that Joe won first prize in the competition?</div>
+    </div>
+
+    <h2>Task 2: Grab & Put Adjectives</h2>
+    <div class="word-box-title">📦 Word Box for Task 2:</div>
+    <div class="neon-word-bank" id="bank-task2"></div>
+
+    <div class="exercise-block" id="block-task2">
+        <div class="sentence-item"><span class="num-badge">01.</span> I really liked the first Fast Cars film, but I thought the second film, Even Faster Cars, was so <div class="neon-drop-zone" data-ans="boring"></div>. I actually fell asleep at one point.</div>
+        <div class="sentence-item"><span class="num-badge">02.</span> I tried to explain to my dad how to use Snapchat, but he just looked really <div class="neon-drop-zone" data-ans="confused"></div>. I don’t think he’ll ever understand technology.</div>
+        <div class="sentence-item"><span class="num-badge">03.</span> My sister is <div class="neon-drop-zone" data-ans="annoyed"></div> with me at the moment because I borrowed her top without asking and got tomato ketchup on it.</div>
+        <div class="sentence-item"><span class="num-badge">04.</span> The other day I called my teacher ‘Mum’ by mistake and everyone laughed at me. I was so <div class="neon-drop-zone" data-ans="embarrassed"></div>!</div>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <div class="neon-controls">
+            <button class="btn-bold btn-bold-check" onclick="verifyPopGame()">Check Answers ⚡️</button>
+            <button class="btn-bold btn-bold-reset" onclick="resetPopGame()">Restart Game 🔄</button>
+            
+            <div class="score-board" id="neon-score-box">
+                <div class="score-text" id="neon-score-msg"></div>
+                <img src="https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=600" class="cool-graphic" alt="Gamer Cat">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Task 2 Adjective pairs pool
+    const poolTask2 = ["annoyed", "annoying", "bored", "boring", "confused", "confusing", "embarrassed", "embarrassing"];
+    let trackedSelectionElement = null;
+
+    // Load custom neon boxes
+    function setupNeonBank() {
+        const bankElement = document.getElementById('bank-task2');
+        bankElement.innerHTML = '';
+        
+        [...poolTask2].sort().forEach((word, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'neon-word';
+            btn.innerText = word;
+            btn.id = `neon-t2-${index}`;
+            btn.onclick = (event) => {
+                event.stopPropagation();
+                if (trackedSelectionElement) {
+                    trackedSelectionElement.classList.remove('selected');
+                }
+                trackedSelectionElement = btn;
+                btn.classList.add('selected');
+            };
+            bankElement.appendChild(btn);
+        });
+    }
+
+    // Connect landing anchors for elements
+    function buildAnchorZones() {
+        document.querySelectorAll('#block-task2 .neon-drop-zone').forEach(zone => {
+            zone.onclick = (event) => {
+                event.stopPropagation();
+                
+                const loadedWord = zone.querySelector('.placed-text');
+                if (loadedWord) {
+                    const trackingSource = document.getElementById(loadedWord.dataset.sourceId);
+                    if (trackingSource) {
+                        trackingSource.classList.remove('used');
+                    }
+                    zone.innerHTML = '';
+                    zone.className = 'neon-drop-zone';
+                    return;
+                }
+
+                if (trackedSelectionElement) {
+                    const textContent = trackedSelectionElement.innerText;
+                    zone.innerHTML = `<span class="placed-text" data-source-id="${trackedSelectionElement.id}">${textContent}</span>`;
+                    trackedSelectionElement.classList.add('used');
+                    trackedSelectionElement.classList.remove('selected');
+                    trackedSelectionElement = null;
+                }
+            };
+        });
+    }
+
+    function verifyPopGame() {
+        let itemsCorrect = 0;
+        let totalItems = 0;
+
+        // Verify Dropdowns (Task 1)
+        document.querySelectorAll('#block-task1 select').forEach(dropdown => {
+            totalItems++;
+            const choice = dropdown.value;
+            const absoluteAnswer = dropdown.dataset.ans;
+
+            if (choice === absoluteAnswer) {
+                itemsCorrect++;
+                dropdown.className = 'correct-neon';
+            } else {
+                dropdown.className = 'wrong-neon';
+            }
+        });
+
+        // Verify Snap Anchors (Task 2)
+        document.querySelectorAll('#block-task2 .neon-drop-zone').forEach(zone => {
+            totalItems++;
+            const extractedObj = zone.querySelector('.placed-text');
+            const choice = extractedObj ? extractedObj.innerText.trim().toLowerCase() : "";
+            const absoluteAnswer = zone.dataset.ans.toLowerCase();
+
+            if (choice === absoluteAnswer) {
+                itemsCorrect++;
+                zone.className = 'neon-drop-zone correct-zone-neon';
+            } else {
+                zone.className = 'neon-drop-zone wrong-zone-neon';
+            }
+        });
+
+        const panelElement = document.getElementById('neon-score-box');
+        document.getElementById('neon-score-msg').innerText = `BOOM! SCORE: ${itemsCorrect} / ${totalItems}`;
+        panelElement.style.display = 'block';
+        panelElement.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetPopGame() {
+        // Dropdown Reset
+        document.querySelectorAll('#block-task1 select').forEach(dropdown => {
+            dropdown.value = '';
+            dropdown.className = '';
+        });
+
+        // Anchor Zones Reset
+        document.querySelectorAll('#block-task2 .neon-drop-zone').forEach(zone => {
+            zone.innerHTML = '';
+            zone.className = 'neon-drop-zone';
+        });
+
+        // State Flags Reset
+        trackedSelectionElement = null;
+        setupNeonBank();
+
+        // Overlay element clear
+        document.getElementById('neon-score-box').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Engine Start
+    setupNeonBank();
+    buildAnchorZones();
+</script>
+
+</body>
+</html>
