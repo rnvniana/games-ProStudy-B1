@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom English Game - Articles & Intro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --board-green: #143d2b;
+            --wood-border: #92582b;
+            --chalk-white: #ffffff;
+            --chalk-yellow: #ffe600;
+            --chalk-pink: #ff52a8;
+            --chalk-cyan: #00f0ff;
+            --chalk-orange: #ff7a00;
+            --correct-green: #2ecc71;
+            --wrong-red: #ff3838;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: #fdf6e2;
+            background-image: radial-gradient(#e2d5b5 2px, transparent 2px);
+            background-size: 24px 24px;
+            color: #2c3e50;
+            margin: 0; padding: 30px 15px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .classroom-card {
+            background: var(--board-green);
+            border: 18px solid var(--wood-border);
+            border-radius: 24px;
+            max-width: 850px; width: 100%;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.6);
+            color: var(--chalk-white);
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 3.8rem;
+            color: var(--chalk-yellow);
+            text-align: center;
+            margin: 0 0 5px 0;
+            text-shadow: 3px 3px 0px #000;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--chalk-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.4rem;
+            color: var(--chalk-pink);
+            border-bottom: 2px dashed var(--chalk-pink);
+            padding-bottom: 5px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 0px #000;
+        }
+
+        .task-box {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 25px;
+            border-radius: 18px;
+            line-height: 2.4;
+            font-size: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Chalk Input (Task 1) */
+        .chalk-input {
+            background: transparent;
+            border: none;
+            border-bottom: 3px dashed var(--chalk-yellow);
+            color: var(--chalk-yellow);
+            font-family: 'Caveat', cursive;
+            font-size: 1.9rem;
+            padding: 0 10px;
+            outline: none;
+            width: 55%;
+            margin-left: 8px;
+            transition: 0.2s;
+        }
+        .chalk-input:focus {
+            border-bottom-color: var(--chalk-cyan);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Article Select Dropdowns (Task 2 & 3) */
+        select.article-select {
+            background: var(--chalk-orange);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 3px 12px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: bold;
+            font-size: 1.15rem;
+            outline: none;
+            cursor: pointer;
+            margin: 0 6px;
+            box-shadow: 2px 2px 0px #000;
+            transition: 0.2s;
+        }
+        select.article-select:hover {
+            transform: scale(1.05);
+        }
+
+        /* Feedback States */
+        .correct-state {
+            background: var(--correct-green) !important;
+            border-color: #000 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+
+        .wrong-state {
+            background: var(--wrong-red) !important;
+            border-color: #000 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+
+        /* Controls */
+        .control-panel {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid var(--chalk-yellow);
+        }
+
+        .btn-chalk {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.25rem;
+            font-weight: bold;
+            padding: 14px 32px;
+            border: 3px solid #000;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 8px;
+            box-shadow: 4px 4px 0px #000;
+            transition: 0.15s;
+        }
+        .btn-chalk:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .btn-check { background: var(--chalk-yellow); color: #000; }
+        .btn-check:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+
+        .btn-reset { background: var(--chalk-cyan); color: #000; }
+        .btn-reset:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+
+        .score-board {
+            display: none;
+            margin-top: 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 2.4rem;
+            color: var(--chalk-yellow);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="classroom-card">
+    <h1>A / AN Articles & Intro 🎒</h1>
+    <div class="subtitle">Classroom Fun Practice</div>
+
+    <h2>Task 1: Answer those questions</h2>
+    <div class="task-box" id="t1-box">
+        1. Hello. What's your name? <input type="text" class="chalk-input" placeholder="Type your name..."><br>
+        2. How do you spell it? <input type="text" class="chalk-input" placeholder="e.g. J-O-H-N..."><br>
+        3. How are you? <input type="text" class="chalk-input" placeholder="e.g. I am fine!"><br>
+        4. What day is it today? <input type="text" class="chalk-input" placeholder="e.g. Monday...">
+    </div>
+
+    <h2>Task 2: Write a or an</h2>
+    <div class="task-box">
+        1. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> blue book<br>
+        2. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> orange pencil case<br>
+        3. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> picture<br>
+        4. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green rubber<br>
+        5. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> apple<br>
+        6. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> red pen
+    </div>
+
+    <h2>Task 3: Complete with a or an</h2>
+    <div class="task-box">
+        1. There is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green English book on the desk.<br>
+        2. She's reading <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> comic.<br>
+        3. This girl is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> pilot.
+    </div>
+
+    <div class="control-panel">
+        <button class="btn-chalk btn-check" onclick="checkAnswers()">Check Answers 🌟</button>
+        <button class="btn-chalk btn-reset" onclick="resetGame()">Restart Game 🔄</button>
+        <div class="score-board" id="score-text"></div>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        let correctCount = 0;
+        let totalCount = 0;
+
+        // Check Task 1 Inputs (Check if filled)
+        document.querySelectorAll('.chalk-input').forEach(input => {
+            if (input.value.trim() !== '') {
+                input.style.borderBottomColor = 'var(--correct-green)';
+            } else {
+                input.style.borderBottomColor = 'var(--wrong-red)';
+            }
+        });
+
+        // Check Task 2 & Task 3 Selects
+        document.querySelectorAll('.article-select').forEach(select => {
+            totalCount++;
+            const userChoice = select.value;
+            const targetAnswer = select.dataset.ans;
+
+            if (userChoice === targetAnswer) {
+                correctCount++;
+                select.className = 'article-select correct-state';
+            } else {
+                select.className = 'article-select wrong-state';
+            }
+        });
+
+        const scoreDisplay = document.getElementById('score-text');
+        scoreDisplay.innerText = `Great Effort! Grammar Score: ${correctCount} / ${totalCount} ⭐`;
+        scoreDisplay.style.display = 'block';
+        scoreDisplay.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetGame() {
+        // Clear Inputs
+        document.querySelectorAll('.chalk-input').forEach(input => {
+            input.value = '';
+            input.style.borderBottomColor = 'var(--chalk-yellow)';
+        });
+
+        // Clear Selects
+        document.querySelectorAll('.article-select').forEach(select => {
+            select.value = '';
+            select.className = 'article-select';
+        });
+
+        document.getElementById('score-text').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
