@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a/an articles - Classroom Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --board-green: #1b4332;
+            --wood-frame: #8b5a2b;
+            --chalk-white: #ffffff;
+            --chalk-yellow: #ffde59;
+            --chalk-pink: #ff66c4;
+            --chalk-cyan: #5ce1e6;
+            --chalk-orange: #ff914d;
+            --correct-green: #2ecc71;
+            --wrong-red: #e74c3c;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: #f4ecd8;
+            background-image: radial-gradient(#d3c5a3 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: #2c3e50;
+            margin: 0; padding: 25px 15px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .board-container {
+            background: var(--board-green);
+            border: 20px solid var(--wood-frame);
+            border-radius: 25px;
+            max-width: 850px; width: 100%;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            color: var(--chalk-white);
+            position: relative;
+        }
+
+        /* Заголовок Доски */
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 3.8rem;
+            color: var(--chalk-yellow);
+            text-align: center;
+            margin: 0 0 10px 0;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--chalk-cyan);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.3rem;
+            color: var(--chalk-cyan);
+            border-bottom: 2px dashed var(--chalk-cyan);
+            padding-bottom: 5px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        /* Блок задания 1 - Аудио плеер */
+        .audio-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px dashed var(--chalk-yellow);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        audio {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .task-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 25px;
+            border-radius: 15px;
+            line-height: 2.5;
+            font-size: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Варианты выбора (Radio buttons) */
+        .radio-group {
+            display: inline-flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+
+        .radio-group input[type="radio"] { display: none; }
+
+        .radio-label {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid var(--chalk-white);
+            padding: 3px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.1rem;
+            color: var(--chalk-white);
+            user-select: none;
+        }
+
+        .radio-group input[type="radio"]:checked + .radio-label {
+            background: var(--chalk-pink);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--chalk-pink);
+        }
+
+        /* Текстовые поля (Task 2) */
+        .chalk-input {
+            background: transparent;
+            border: none;
+            border-bottom: 3px dashed var(--chalk-yellow);
+            color: var(--chalk-yellow);
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            padding: 2px 10px;
+            outline: none;
+            width: 55%;
+            margin-left: 10px;
+        }
+
+        /* Выпадающие списки (Task 3 & 4) */
+        select.article-select {
+            background: var(--chalk-orange);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        /* Подсветка ошибок/успехов */
+        .correct-choice {
+            background: var(--correct-green) !important;
+            border-color: var(--correct-green) !important;
+            color: #fff !important;
+        }
+
+        .wrong-choice {
+            background: var(--wrong-red) !important;
+            border-color: var(--wrong-red) !important;
+            color: #fff !important;
+        }
+
+        /* Панель управления */
+        .control-panel {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid var(--chalk-yellow);
+        }
+
+        .btn-chalk {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 14px 30px;
+            border: 3px solid #000;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 8px;
+            box-shadow: 4px 4px 0px #000;
+            transition: 0.2s;
+        }
+
+        .btn-check { background: var(--chalk-yellow); color: #000; }
+        .btn-check:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+        
+        .btn-reset { background: var(--chalk-cyan); color: #000; }
+        .btn-reset:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+
+        .score-display {
+            display: none;
+            margin-top: 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            color: var(--chalk-yellow);
+        }
+    </style>
+</head>
+<body>
+
+<div class="board-container">
+    <h1>a/an articles ✏️</h1>
+    <div class="subtitle">Classroom Grammar Game</div>
+
+    <h2>Task 1: Listen and choose the right name</h2>
+    <div class="audio-box">
+        <span style="font-weight: bold; color: var(--chalk-yellow);">🎧 Audio:</span>
+        <audio controls>
+            <source src="PREPARE2_L1_WB_001.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <div class="task-box" id="t1-container">
+        1. <div class="radio-group" data-correct="Julia">
+            <input type="radio" name="name1" id="t1_1a" value="Julie"><label for="t1_1a" class="radio-label">Julie</label>
+            <input type="radio" name="name1" id="t1_1b" value="Julia"><label for="t1_1b" class="radio-label">Julia</label>
+        </div><br>
+
+        2. <div class="radio-group" data-correct="Bryan">
+            <input type="radio" name="name2" id="t1_2a" value="Brian"><label for="t1_2a" class="radio-label">Brian</label>
+            <input type="radio" name="name2" id="t1_2b" value="Bryan"><label for="t1_2b" class="radio-label">Bryan</label>
+        </div><br>
+
+        3. <div class="radio-group" data-correct="Tracey">
+            <input type="radio" name="name3" id="t1_3a" value="Tracy"><label for="t1_3a" class="radio-label">Tracy</label>
+            <input type="radio" name="name3" id="t1_3b" value="Tracey"><label for="t1_3b" class="radio-label">Tracey</label>
+        </div><br>
+
+        4. <div class="radio-group" data-correct="Stephen">
+            <input type="radio" name="name4" id="t1_4a" value="Steven"><label for="t1_4a" class="radio-label">Steven</label>
+            <input type="radio" name="name4" id="t1_4b" value="Stephen"><label for="t1_4b" class="radio-label">Stephen</label>
+        </div><br>
+
+        5. <div class="radio-group" data-correct="Vicki">
+            <input type="radio" name="name5" id="t1_5a" value="Vicki"><label for="t1_5a" class="radio-label">Vicki</label>
+            <input type="radio" name="name5" id="t1_5b" value="Vicky"><label for="t1_5b" class="radio-label">Vicky</label>
+        </div><br>
+
+        6. <div class="radio-group" data-correct="Stewart">
+            <input type="radio" name="name6" id="t1_6a" value="Stewart"><label for="t1_6a" class="radio-label">Stewart</label>
+            <input type="radio" name="name6" id="t1_6b" value="Stuart"><label for="t1_6b" class="radio-label">Stuart</label>
+        </div>
+    </div>
+
+    <h2>Task 2: Answer those questions</h2>
+    <div class="task-box">
+        1. Hello. What's your name? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        2. How do you spell it? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        3. How are you? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        4. What day is it today? <input type="text" class="chalk-input" placeholder="Write here...">
+    </div>
+
+    <h2>Task 3: Write a or an</h2>
+    <div class="task-box">
+        1. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> blue book<br>
+        2. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> orange pencil case<br>
+        3. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> picture<br>
+        4. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green rubber<br>
+        5. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> apple<br>
+        6. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> red pen
+    </div>
+
+    <h2>Task 4: Complete with a or an</h2>
+    <div class="task-box">
+        1. There is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green English book on the desk.<br>
+        2. She's reading <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> comic.<br>
+        3. This girl is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> pilot.
+    </div>
+
+    <div class="control-panel">
+        <button class="btn-chalk btn-check" onclick="checkClassroomGame()">Check Answers 🌟</button>
+        <button class="btn-chalk btn-reset" onclick="resetClassroomGame()">Restart Game 🔄</button>
+        <div class="score-display" id="score-text"></div>
+    </div>
+</div>
+
+<script>
+    function checkClassroomGame() {
+        let score = 0;
+        let total = 0;
+
+        // Verify Task 1 Radio Groups
+        document.querySelectorAll('#t1-container .radio-group').forEach(group => {
+            total++;
+            const correctVal = group.dataset.correct;
+            const checkedRadio = group.querySelector('input[type="radio"]:checked');
+            
+            group.querySelectorAll('.radio-label').forEach(lbl => lbl.classList.remove('correct-choice', 'wrong-choice'));
+
+            if (checkedRadio) {
+                const userLabel = group.querySelector(`label[for="${checkedRadio.id}"]`);
+                if (checkedRadio.value === correctVal) {
+                    score++;
+                    userLabel.classList.add('correct-choice');
+                } else {
+                    userLabel.classList.add('wrong-choice');
+                }
+            }
+        });
+
+        // Verify Task 3 & 4 Selects
+        document.querySelectorAll('select.article-select').forEach(select => {
+            total++;
+            const correctAns = select.dataset.ans;
+            if (select.value === correctAns) {
+                score++;
+                select.className = 'article-select correct-choice';
+            } else {
+                select.className = 'article-select wrong-choice';
+            }
+        });
+
+        const scoreText = document.getElementById('score-text');
+        scoreText.innerText = `Great Job! Score: ${score} / ${total}`;
+        scoreText.style.display = 'block';
+        scoreText.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetClassroomGame() {
+        // Reset Radios
+        document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+        document.querySelectorAll('.radio-label').forEach(lbl => lbl.classList.remove('correct-choice', 'wrong-choice'));
+
+        // Reset Text Inputs
+        document.querySelectorAll('.chalk-input').forEach(input => input.value = '');
+
+        // Reset Selects
+        document.querySelectorAll('select.article-select').forEach(select => {
+            select.value = '';
+            select.className = 'article-select';
+        });
+
+        document.getElementById('score-text').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
