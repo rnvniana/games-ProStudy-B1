@@ -3,283 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 7 - Matching Test</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>a/an articles - Classroom Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Caveat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #D4AF37;
-            --gold-light: #F4E4BC;
-            --white: #FFFFFF;
-            --dark: #2C2C2C;
-            --bg: #fdfdfd;
-            --active-blue: #e0f2fe;
+            --board-green: #1b4332;
+            --wood-frame: #8b5a2b;
+            --chalk-white: #ffffff;
+            --chalk-yellow: #ffde59;
+            --chalk-pink: #ff66c4;
+            --chalk-cyan: #5ce1e6;
+            --chalk-orange: #ff914d;
+            --correct-green: #2ecc71;
+            --wrong-red: #e74c3c;
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg);
-            color: var(--dark);
-            margin: 0; padding: 15px;
+            font-family: 'Comic Neue', cursive;
+            background: #f4ecd8;
+            background-image: radial-gradient(#d3c5a3 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: #2c3e50;
+            margin: 0; padding: 25px 15px;
             display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
 
-        .container {
-            background: var(--white);
-            max-width: 800px; width: 100%;
-            padding: 30px; border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-            border: 1px solid var(--gold-light);
+        .board-container {
+            background: var(--board-green);
+            border: 20px solid var(--wood-frame);
+            border-radius: 25px;
+            max-width: 850px; width: 100%;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.6);
             box-sizing: border-box;
+            color: var(--chalk-white);
+            position: relative;
         }
 
-        h1 { color: var(--gold); text-align: center; font-size: 1.5rem; text-transform: uppercase; margin-bottom: 25px; }
-        h2 { border-left: 4px solid var(--gold); padding-left: 12px; margin-top: 35px; font-size: 1.1rem; }
-
-        .instruction {
-            font-size: 0.9rem; color: #666; text-align: center; margin-bottom: 10px;
+        /* Заголовок Доски */
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 3.8rem;
+            color: var(--chalk-yellow);
+            text-align: center;
+            margin: 0 0 10px 0;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
         }
 
-        .word-bank {
-            display: flex; flex-wrap: wrap; gap: 10px;
-            justify-content: center; margin: 15px 0;
-            padding: 15px; background: #fffdf9;
-            border: 2px solid var(--gold-light); border-radius: 15px;
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--chalk-cyan);
+            margin-bottom: 30px;
         }
 
-        .word-item {
-            background: white; border: 2px solid var(--gold);
-            padding: 8px 15px; border-radius: 8px;
-            cursor: pointer; font-weight: bold; color: var(--gold);
-            transition: all 0.2s; user-select: none;
-            font-size: 0.9rem;
+        h2 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.3rem;
+            color: var(--chalk-cyan);
+            border-bottom: 2px dashed var(--chalk-cyan);
+            padding-bottom: 5px;
+            margin-top: 35px;
+            margin-bottom: 15px;
         }
 
-        .word-item.selected {
-            background: var(--gold); color: white;
-            transform: scale(1.05); box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        /* Блок задания 1 - Аудио плеер */
+        .audio-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px dashed var(--chalk-yellow);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .word-item.used {
-            opacity: 0.3; cursor: default; pointer-events: none;
+        audio {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            outline: none;
         }
 
-        .drop-zone {
-            display: inline-flex; align-items: center; justify-content: center;
-            min-width: 100px; height: 30px; border-bottom: 2px solid var(--gold-light);
-            margin: 0 5px; vertical-align: middle; cursor: pointer;
-            transition: background 0.2s; border-radius: 4px;
+        .task-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 25px;
+            border-radius: 15px;
+            line-height: 2.5;
+            font-size: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .drop-zone:hover { background: var(--active-blue); }
+        /* Варианты выбора (Radio buttons) */
+        .radio-group {
+            display: inline-flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+
+        .radio-group input[type="radio"] { display: none; }
+
+        .radio-label {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid var(--chalk-white);
+            padding: 3px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.1rem;
+            color: var(--chalk-white);
+            user-select: none;
+        }
+
+        .radio-group input[type="radio"]:checked + .radio-label {
+            background: var(--chalk-pink);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--chalk-pink);
+        }
+
+        /* Текстовые поля (Task 2) */
+        .chalk-input {
+            background: transparent;
+            border: none;
+            border-bottom: 3px dashed var(--chalk-yellow);
+            color: var(--chalk-yellow);
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            padding: 2px 10px;
+            outline: none;
+            width: 55%;
+            margin-left: 10px;
+        }
+
+        /* Выпадающие списки (Task 3 & 4) */
+        select.article-select {
+            background: var(--chalk-orange);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        /* Подсветка ошибок/успехов */
+        .correct-choice {
+            background: var(--correct-green) !important;
+            border-color: var(--correct-green) !important;
+            color: #fff !important;
+        }
+
+        .wrong-choice {
+            background: var(--wrong-red) !important;
+            border-color: var(--wrong-red) !important;
+            color: #fff !important;
+        }
+
+        /* Панель управления */
+        .control-panel {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid var(--chalk-yellow);
+        }
+
+        .btn-chalk {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 14px 30px;
+            border: 3px solid #000;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 8px;
+            box-shadow: 4px 4px 0px #000;
+            transition: 0.2s;
+        }
+
+        .btn-check { background: var(--chalk-yellow); color: #000; }
+        .btn-check:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
         
-        .drop-zone.filled {
-            border: 1px solid var(--gold-light); background: #fffef0;
-            color: var(--gold); font-weight: bold; padding: 0 10px;
+        .btn-reset { background: var(--chalk-cyan); color: #000; }
+        .btn-reset:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+
+        .score-display {
+            display: none;
+            margin-top: 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            color: var(--chalk-yellow);
         }
-
-        .question-block { line-height: 2.8; margin-bottom: 25px; font-size: 0.95rem; }
-
-        .btn-gold {
-            display: block; width: 100%; padding: 15px;
-            background: var(--gold); color: white;
-            border: none; border-radius: 10px;
-            font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            margin-top: 25px; box-shadow: 0 4px 0 #b8952e;
-        }
-
-        #results-area {
-            display: none; text-align: center; margin-top: 25px;
-            padding: 25px; border: 3px solid var(--gold); border-radius: 20px; background: #fff;
-            width: 100%; max-width: 800px; box-sizing: border-box;
-        }
-
-        .leaderboard { width: 100%; margin-top: 15px; border-collapse: collapse; }
-        .leaderboard td { padding: 8px; border-bottom: 1px solid var(--gold-light); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Unit 7 Test</h1>
+<div class="board-container">
+    <h1>a/an articles ✏️</h1>
+    <div class="subtitle">Classroom Grammar Game</div>
 
-    <div style="text-align: center; margin-bottom: 20px;">
-        <input type="text" id="student-name" placeholder="Student's Name" style="padding: 10px; width: 80%; border: none; border-bottom: 2px solid var(--gold); outline: none; text-align: center; font-family: 'Montserrat';">
+    <h2>Task 1: Listen and choose the right name</h2>
+    <div class="audio-box">
+        <span style="font-weight: bold; color: var(--chalk-yellow);">🎧 Audio:</span>
+        <audio controls>
+            <source src="PREPARE2_L1_WB_001.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
 
-    <p class="instruction">Tap a word below, then tap the empty line in the sentence.</p>
+    <div class="task-box" id="t1-container">
+        1. <div class="radio-group" data-correct="Julia">
+            <input type="radio" name="name1" id="t1_1a" value="Julie"><label for="t1_1a" class="radio-label">Julie</label>
+            <input type="radio" name="name1" id="t1_1b" value="Julia"><label for="t1_1b" class="radio-label">Julia</label>
+        </div><br>
 
-    <h2>Task 1 - Phrasal Verbs</h2>
-    <div class="word-bank" id="bank-t1">
-        <div class="word-item" onclick="selectWord(this)">come round</div>
-        <div class="word-item" onclick="selectWord(this)">fall out</div>
-        <div class="word-item" onclick="selectWord(this)">get on</div>
-        <div class="word-item" onclick="selectWord(this)">get together</div>
-        <div class="word-item" onclick="selectWord(this)">hang out</div>
-        <div class="word-item" onclick="selectWord(this)">look after</div>
-        <div class="word-item" onclick="selectWord(this)">make up</div>
-        <div class="word-item" onclick="selectWord(this)">split up</div>
+        2. <div class="radio-group" data-correct="Bryan">
+            <input type="radio" name="name2" id="t1_2a" value="Brian"><label for="t1_2a" class="radio-label">Brian</label>
+            <input type="radio" name="name2" id="t1_2b" value="Bryan"><label for="t1_2b" class="radio-label">Bryan</label>
+        </div><br>
+
+        3. <div class="radio-group" data-correct="Tracey">
+            <input type="radio" name="name3" id="t1_3a" value="Tracy"><label for="t1_3a" class="radio-label">Tracy</label>
+            <input type="radio" name="name3" id="t1_3b" value="Tracey"><label for="t1_3b" class="radio-label">Tracey</label>
+        </div><br>
+
+        4. <div class="radio-group" data-correct="Stephen">
+            <input type="radio" name="name4" id="t1_4a" value="Steven"><label for="t1_4a" class="radio-label">Steven</label>
+            <input type="radio" name="name4" id="t1_4b" value="Stephen"><label for="t1_4b" class="radio-label">Stephen</label>
+        </div><br>
+
+        5. <div class="radio-group" data-correct="Vicki">
+            <input type="radio" name="name5" id="t1_5a" value="Vicki"><label for="t1_5a" class="radio-label">Vicki</label>
+            <input type="radio" name="name5" id="t1_5b" value="Vicky"><label for="t1_5b" class="radio-label">Vicky</label>
+        </div><br>
+
+        6. <div class="radio-group" data-correct="Stewart">
+            <input type="radio" name="name6" id="t1_6a" value="Stewart"><label for="t1_6a" class="radio-label">Stewart</label>
+            <input type="radio" name="name6" id="t1_6b" value="Stuart"><label for="t1_6b" class="radio-label">Stuart</label>
+        </div>
     </div>
 
-    <div class="question-block">
-        1. I don’t <span class="drop-zone" data-ans="get on" onclick="placeWord(this)"></span> very well with my brother. We had a big argument last week. I don’t know if we’ll ever <span class="drop-zone" data-ans="make up" onclick="placeWord(this)"></span>. <br>
-        2. Some of my friends <span class="drop-zone" data-ans="hang out" onclick="placeWord(this)"></span> at the youth centre, but I don’t go there. <br>
-        3. Tom and Harriet weren’t together for long. They <span class="drop-zone" data-ans="split up" onclick="placeWord(this)"></span> after six weeks. <br>
-        4. I know you’re nervous, but you mustn’t worry. I’ll <span class="drop-zone" data-ans="look after" onclick="placeWord(this)"></span> you. <br>
-        5. I always <span class="drop-zone" data-ans="get together" onclick="placeWord(this)"></span> with my friends after school, but they never <span class="drop-zone" data-ans="come round" onclick="placeWord(this)"></span> to my place. <br>
-        6. It isn’t a serious problem, and I’m sure we won’t <span class="drop-zone" data-ans="fall out" onclick="placeWord(this)"></span> about it.
+    <h2>Task 2: Answer those questions</h2>
+    <div class="task-box">
+        1. Hello. What's your name? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        2. How do you spell it? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        3. How are you? <input type="text" class="chalk-input" placeholder="Write here..."><br>
+        4. What day is it today? <input type="text" class="chalk-input" placeholder="Write here...">
     </div>
 
-    <h2>Task 2 - Grammar Rules</h2>
-    <div class="word-bank" id="bank-t2">
-        <div class="word-item" onclick="selectWord(this)">should</div>
-        <div class="word-item" onclick="selectWord(this)">shouldn't</div>
-        <div class="word-item" onclick="selectWord(this)">should</div>
+    <h2>Task 3: Write a or an</h2>
+    <div class="task-box">
+        1. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> blue book<br>
+        2. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> orange pencil case<br>
+        3. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> picture<br>
+        4. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green rubber<br>
+        5. <select class="article-select" data-ans="an"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> apple<br>
+        6. <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> red pen
     </div>
 
-    <div class="question-block">
-        We use: <br>
-        a <span class="drop-zone" data-ans="should" onclick="placeWord(this)"></span> to say something is a good idea. <br>
-        b <span class="drop-zone" data-ans="shouldn't" onclick="placeWord(this)"></span> to say something isn't a good idea. <br>
-        c <span class="drop-zone" data-ans="should" onclick="placeWord(this)"></span> in questions to ask for advice.
+    <h2>Task 4: Complete with a or an</h2>
+    <div class="task-box">
+        1. There is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> green English book on the desk.<br>
+        2. She's reading <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> comic.<br>
+        3. This girl is <select class="article-select" data-ans="a"><option value="">?</option><option value="a">a</option><option value="an">an</option></select> pilot.
     </div>
 
-    <button class="btn-gold" onclick="gradeTest()">SUBMIT TEST ✨</button>
-</div>
-
-<div id="results-area">
-    <h2 id="cheer-text" style="color: var(--gold);"></h2>
-    <h3 id="score-display"></h3>
-    <button class="btn-gold" style="background: var(--dark); box-shadow: 0 4px 0 #1a1a1a;" onclick="generatePDF()">DOWNLOAD PDF 📑</button>
-    
-    <div style="margin-top:25px;">
-        <h4 style="color: var(--gold);">TOP RESULTS</h4>
-        <table class="leaderboard" id="lb-table"></table>
+    <div class="control-panel">
+        <button class="btn-chalk btn-check" onclick="checkClassroomGame()">Check Answers 🌟</button>
+        <button class="btn-chalk btn-reset" onclick="resetClassroomGame()">Restart Game 🔄</button>
+        <div class="score-display" id="score-text"></div>
     </div>
 </div>
 
 <script>
-    let selectedWordElement = null;
-
-    function selectWord(el) {
-        if (selectedWordElement) {
-            selectedWordElement.classList.remove('selected');
-        }
-        selectedWordElement = el;
-        el.classList.add('selected');
-    }
-
-    function placeWord(zone) {
-        if (!selectedWordElement) {
-            // Если в зоне уже есть слово, убираем его обратно
-            if (zone.innerText !== "") {
-                const wordText = zone.innerText;
-                const bankId = zone.closest('.question-block').previousElementSibling.id;
-                const originalWords = document.getElementById(bankId).querySelectorAll('.word-item');
-                
-                for (let w of originalWords) {
-                    if (w.innerText === wordText && w.classList.contains('used')) {
-                        w.classList.remove('used');
-                        break;
-                    }
-                }
-                zone.innerText = "";
-                zone.classList.remove('filled');
-            }
-            return;
-        }
-
-        // Если в зоне уже было слово, возвращаем его
-        if (zone.innerText !== "") {
-            const oldWordText = zone.innerText;
-            const bankId = zone.closest('.question-block').previousElementSibling.id;
-            const originalWords = document.getElementById(bankId).querySelectorAll('.word-item');
-            for (let w of originalWords) {
-                if (w.innerText === oldWordText && w.classList.contains('used')) {
-                    w.classList.remove('used');
-                    break;
-                }
-            }
-        }
-
-        zone.innerText = selectedWordElement.innerText;
-        zone.classList.add('filled');
-        selectedWordElement.classList.add('used');
-        selectedWordElement.classList.remove('selected');
-        selectedWordElement = null;
-    }
-
-    function gradeTest() {
-        const name = document.getElementById('student-name').value;
-        if (!name) return alert("Please type your name! 😊");
-
+    function checkClassroomGame() {
         let score = 0;
-        const zones = document.querySelectorAll('.drop-zone');
-        
-        zones.forEach(zone => {
-            const isCorrect = zone.innerText.trim() === zone.dataset.ans;
-            if (isCorrect) {
-                score++;
-                zone.style.color = "#2e7d32";
-            } else {
-                zone.style.color = "#d32f2f";
-            }
-            zone.onclick = null; // Блокируем после отправки
-        });
+        let total = 0;
 
-        const cheers = ["Good job!", "You did great!", "Excellent!", "Amazing work!", "Fantastic!"];
-        document.getElementById('results-area').style.display = 'block';
-        document.getElementById('cheer-text').innerText = cheers[Math.floor(Math.random() * cheers.length)];
-        document.getElementById('score-display').innerText = `Your Score: ${score} / ${zones.length}`;
-        
-        saveRating(name, score);
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function saveRating(name, score) {
-        let scores = JSON.parse(localStorage.getItem('unit7_ratings') || '[]');
-        scores.push({name, score});
-        scores.sort((a,b) => b.score - a.score);
-        localStorage.setItem('unit7_ratings', JSON.stringify(scores.slice(0, 5)));
-        
-        const table = document.getElementById('lb-table');
-        table.innerHTML = scores.slice(0, 5).map(s => `<tr><td>${s.name}</td><td><b>${s.score}</b></td></tr>`).join('');
-    }
-
-    function generatePDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const name = document.getElementById('student-name').value;
-        const finalScore = document.getElementById('score-display').innerText;
-
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(212, 175, 55);
-        doc.text("Unit 7 Test Report", 20, 20);
-        
-        doc.setFontSize(12);
-        doc.setTextColor(44, 44, 44);
-        doc.text(`Student: ${name}`, 20, 30);
-        doc.text(finalScore, 20, 38);
-        doc.line(20, 42, 190, 42);
-
-        let y = 55;
-        const zones = document.querySelectorAll('.drop-zone');
-        zones.forEach((zone, i) => {
-            const userAns = zone.innerText || "(empty)";
-            const correct = zone.dataset.ans;
-            const isCorrect = userAns === correct;
+        // Verify Task 1 Radio Groups
+        document.querySelectorAll('#t1-container .radio-group').forEach(group => {
+            total++;
+            const correctVal = group.dataset.correct;
+            const checkedRadio = group.querySelector('input[type="radio"]:checked');
             
-            doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 100 : 0, 0);
-            doc.text(`${i+1}. Result: ${userAns}`, 20, y);
-            if (!isCorrect) {
-                doc.setFontSize(10);
-                doc.text(`   [Correct: ${correct}]`, 80, y);
-                doc.setFontSize(12);
+            group.querySelectorAll('.radio-label').forEach(lbl => lbl.classList.remove('correct-choice', 'wrong-choice'));
+
+            if (checkedRadio) {
+                const userLabel = group.querySelector(`label[for="${checkedRadio.id}"]`);
+                if (checkedRadio.value === correctVal) {
+                    score++;
+                    userLabel.classList.add('correct-choice');
+                } else {
+                    userLabel.classList.add('wrong-choice');
+                }
             }
-            y += 10;
         });
 
-        doc.save(`${name}_Unit7_Results.pdf`);
+        // Verify Task 3 & 4 Selects
+        document.querySelectorAll('select.article-select').forEach(select => {
+            total++;
+            const correctAns = select.dataset.ans;
+            if (select.value === correctAns) {
+                score++;
+                select.className = 'article-select correct-choice';
+            } else {
+                select.className = 'article-select wrong-choice';
+            }
+        });
+
+        const scoreText = document.getElementById('score-text');
+        scoreText.innerText = `Great Job! Score: ${score} / ${total}`;
+        scoreText.style.display = 'block';
+        scoreText.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetClassroomGame() {
+        // Reset Radios
+        document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+        document.querySelectorAll('.radio-label').forEach(lbl => lbl.classList.remove('correct-choice', 'wrong-choice'));
+
+        // Reset Text Inputs
+        document.querySelectorAll('.chalk-input').forEach(input => input.value = '');
+
+        // Reset Selects
+        document.querySelectorAll('select.article-select').forEach(select => {
+            select.value = '';
+            select.className = 'article-select';
+        });
+
+        document.getElementById('score-text').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
