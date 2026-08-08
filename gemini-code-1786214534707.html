@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REPORTED SPEECH - Pastel Grammar Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-pastel: linear-gradient(135deg, #fef3c7, #fce7f3, #e0e7ff);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #475569;
+            --accent-purple: #c084fc;
+            --accent-pink: #f472b6;
+            --accent-mint: #6ee7b7;
+            --accent-blue: #93c5fd;
+            --correct-bg: #d1fae5;
+            --correct-border: #34d399;
+            --wrong-bg: #ffe4e6;
+            --wrong-border: #fb7185;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: var(--bg-pastel);
+            color: var(--text-color);
+            margin: 0; padding: 30px 15px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            max-width: 850px; width: 100%;
+            padding: 40px; border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border: 2px solid #ffffff;
+        }
+
+        h1 {
+            text-align: center; color: #7e22ce;
+            font-size: 2.5rem; margin-top: 0; margin-bottom: 5px;
+            font-family: 'Quicksand', sans-serif;
+            text-shadow: 2px 2px 0px #fae8ff;
+        }
+
+        .subtitle {
+            text-align: center; color: #a855f7;
+            font-size: 1rem; margin-bottom: 35px; font-style: italic;
+        }
+
+        h2 {
+            background: #fae8ff; color: #6b21a8;
+            padding: 8px 20px; border-radius: 15px;
+            font-size: 1.1rem; margin-top: 35px;
+            display: inline-block; font-family: 'Quicksand', sans-serif;
+        }
+
+        .example-box {
+            background: #f1f5f9; border-left: 5px solid var(--accent-purple);
+            padding: 12px 20px; border-radius: 10px;
+            margin-bottom: 20px; font-size: 0.95rem; color: #64748b;
+        }
+
+        .task-list {
+            display: flex; flex-direction: column; gap: 18px; margin-top: 15px;
+        }
+
+        .item-row {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 18px 22px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.05rem; line-height: 1.8;
+            transition: 0.2s;
+        }
+
+        .item-prompt {
+            font-weight: bold; color: #334155; margin-bottom: 8px;
+        }
+
+        .tag-bracket {
+            background: #e0e7ff; color: #4338ca;
+            padding: 2px 8px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: bold; margin-left: 5px;
+        }
+
+        .input-pastel {
+            width: 100%; border: 2px solid #cbd5e1;
+            border-radius: 12px; padding: 10px 15px;
+            font-family: 'Comfortaa', cursive; font-size: 1rem;
+            outline: none; background: #ffffff;
+            transition: 0.25s; color: #1e293b;
+            margin-top: 5px;
+        }
+
+        .input-pastel:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
+        }
+
+        /* Verification Feedback */
+        .input-pastel.correct {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: #065f46 !important;
+        }
+
+        .input-pastel.wrong {
+            background-color: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+            color: #991b1b !important;
+        }
+
+        /* Controls */
+        .control-panel {
+            margin-top: 40px; background: rgba(255, 255, 255, 0.8);
+            padding: 25px; border-radius: 25px;
+            text-align: center; border: 2px solid #fbcfe8;
+        }
+
+        .btn-pastel {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem; font-weight: 700;
+            padding: 14px 32px; border: none; border-radius: 50px;
+            cursor: pointer; margin: 8px; color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.25s;
+        }
+
+        .btn-check { background: linear-gradient(135deg, #c084fc, #f472b6); }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 114, 182, 0.3); }
+
+        .btn-reset { background: linear-gradient(135deg, #94a3b8, #64748b); }
+        .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3); }
+
+        .result-board {
+            display: none; margin-top: 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.6rem; font-weight: 700; color: #7e22ce;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h1>REPORTED SPEECH 💬</h1>
+    <div class="subtitle">Practice direct and reported speech in style</div>
+
+    <h2>Task 1: Write what the speakers said</h2>
+    <div class="example-box">
+        💡 <strong>Example:</strong> Our teacher reminded us not to leave our bags on the bus.<br>
+        ➜ He said, <em>"Don't leave your bags on the bus."</em>
+    </div>
+
+    <div class="task-list" id="t1-list">
+        <div class="item-row">
+            <div class="item-prompt">1. My brother persuaded me to try a new hairstyle. <span class="tag-bracket">should</span></div>
+            <input type="text" class="input-pastel" data-ans="He said, 'You should try a new hairstyle.'" placeholder="He said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">2. The inspector asked us to show him our tickets. <span class="tag-bracket">please</span></div>
+            <input type="text" class="input-pastel" data-ans="He said, 'Please show me your tickets.'" placeholder="He said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">3. My cousin convinced me not to put my address on the website. <span class="tag-bracket">shouldn't</span></div>
+            <input type="text" class="input-pastel" data-ans="She said, 'You shouldn't put your address on the website.'" placeholder="She said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">4. I told my friends not to text me in the morning. <span class="tag-bracket">mustn't</span></div>
+            <input type="text" class="input-pastel" data-ans="I said, 'You mustn't text me in the morning.'" placeholder="I said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">5. The police officer ordered the driver to get out of his car. <span class="tag-bracket">please</span></div>
+            <input type="text" class="input-pastel" data-ans="She said, 'Please get out of your car.'" placeholder="She said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">6. I asked my sister to help me with the washing-up. <span class="tag-bracket">please</span></div>
+            <input type="text" class="input-pastel" data-ans="I said, 'Please help me with the washing-up.'" placeholder="I said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">7. My friend encouraged me to join the sports club. <span class="tag-bracket">should</span></div>
+            <input type="text" class="input-pastel" data-ans="He said, 'You should join the sports club.'" placeholder="He said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">8. My mum advised me to phone the school. <span class="tag-bracket">should</span></div>
+            <input type="text" class="input-pastel" data-ans="She said, 'You should phone the school.'" placeholder="She said...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">9. The fire officer warned us not to go into the house. <span class="tag-bracket">mustn't</span></div>
+            <input type="text" class="input-pastel" data-ans="He said, 'You mustn't go into the house.'" placeholder="He said...">
+        </div>
+    </div>
+
+    <h2>Task 2: Report what each speaker said</h2>
+    <div class="example-box">
+        💡 <strong>Example:</strong> Use reporting verbs like <em>order, warn, advise, remind, ask, encourage, persuade, tell</em>.
+    </div>
+
+    <div class="task-list" id="t2-list">
+        <div class="item-row">
+            <div class="item-prompt">1. The detective shouted to the thief, "Put the gun on the floor!" <span class="tag-bracket">order</span></div>
+            <input type="text" class="input-pastel" data-ans="The detective ordered the thief to put the gun on the floor." placeholder="The detective...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">2. The electrician said to us, "You mustn't open the box." <span class="tag-bracket">warn</span></div>
+            <input type="text" class="input-pastel" data-ans="The electrician warned us not to open the box." placeholder="The electrician...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">3. The hairdresser said to me, "You shouldn't use this shampoo." <span class="tag-bracket">advise</span></div>
+            <input type="text" class="input-pastel" data-ans="The hairdresser advised me not to use that shampoo." placeholder="The hairdresser...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">4. I texted my friends, "Remember to come to my party." <span class="tag-bracket">remind</span></div>
+            <input type="text" class="input-pastel" data-ans="I reminded my friends to come to my party." placeholder="I reminded...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">5. The teacher said to the students, "Please tell me your names." <span class="tag-bracket">ask</span></div>
+            <input type="text" class="input-pastel" data-ans="The teacher asked the students to tell her/him their names." data-alt="The teacher asked the students to tell him their names." data-alt2="The teacher asked the students to tell her their names." placeholder="The teacher...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">6. I whispered to my brother, "Please don't tell anyone!" <span class="tag-bracket">ask</span></div>
+            <input type="text" class="input-pastel" data-ans="I asked my brother not to tell anyone." placeholder="I asked...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">7. My friend said to me, "You should tell your mum about your problem." <span class="tag-bracket">encourage</span></div>
+            <input type="text" class="input-pastel" data-ans="My friend encouraged me to tell my mum about my problem." placeholder="My friend...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">8. My dad said to my brother, "You really should apply for another job." <span class="tag-bracket">persuade</span></div>
+            <input type="text" class="input-pastel" data-ans="My dad persuaded my brother to apply for another job." placeholder="My dad...">
+        </div>
+        <div class="item-row">
+            <div class="item-prompt">9. My mum said to my dad, "Don't invite the neighbours on Saturday." <span class="tag-bracket">tell</span></div>
+            <input type="text" class="input-pastel" data-ans="My mum told my dad not to invite the neighbours on Saturday." placeholder="My mum...">
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <button class="btn-pastel btn-check" onclick="checkReportedGame()">Check Answers ✨</button>
+        <button class="btn-pastel btn-reset" onclick="resetReportedGame()">Try Again 🔄</button>
+        <div class="result-board" id="score-output"></div>
+    </div>
+</div>
+
+<script>
+    // Helper to normalize quotes & punctuation for smooth checking
+    function cleanText(text) {
+        return text.trim()
+                   .replace(/[’‘`]/g, "'")
+                   .replace(/[“”]/g, '"')
+                   .replace(/\s+/g, ' ')
+                   .toLowerCase();
+    }
+
+    function checkReportedGame() {
+        let correctCount = 0;
+        const allInputs = document.querySelectorAll('.input-pastel');
+
+        allInputs.forEach(input => {
+            const userVal = cleanText(input.value);
+            const mainAns = cleanText(input.dataset.ans);
+            const altAns1 = input.dataset.alt ? cleanText(input.dataset.alt) : null;
+            const altAns2 = input.dataset.alt2 ? cleanText(input.dataset.alt2) : null;
+
+            if (userVal === mainAns || (altAns1 && userVal === altAns1) || (altAns2 && userVal === altAns2)) {
+                correctCount++;
+                input.className = 'input-pastel correct';
+            } else {
+                input.className = 'input-pastel wrong';
+            }
+        });
+
+        const scoreBox = document.getElementById('score-output');
+        scoreBox.innerText = `Awesome! You scored ${correctCount} / ${allInputs.length}! 🎉`;
+        scoreBox.style.display = 'block';
+        scoreBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetReportedGame() {
+        const allInputs = document.querySelectorAll('.input-pastel');
+        allInputs.forEach(input => {
+            input.value = '';
+            input.className = 'input-pastel';
+        });
+
+        document.getElementById('score-output').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
